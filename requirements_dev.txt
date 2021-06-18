@@ -1,0 +1,2 @@
+homeassistant
+psychrolib==2.5.0

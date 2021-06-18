@@ -1,0 +1,64 @@
+default_config:
+
+logger:
+  default: info
+  logs:
+    custom_components.ha_optimal_humidity: debug
+
+# If you need to debug uncommment the line below (doc: https://www.home-assistant.io/integrations/debugpy/)
+# debugpy:
+
+homeassistant:
+  unit_system: metric
+  temperature_unit: C
+  time_zone: America/Edmonton
+  elevation: 1045
+  auth_providers:
+    - type: trusted_networks
+      trusted_networks:
+        - 127.0.0.1
+        - ::1
+      allow_bypass_login: true
+    - type: homeassistant
+
+input_number:
+  indoor_humidity_sensor:
+    name: Indoor Humidity
+    min: 0
+    max: 100
+    initial: 40
+    mode: slider
+    unit_of_measurement: "%"
+  indoor_temp_sensor:
+    name: Indoor Temperature
+    min: 0
+    max: 100
+    initial: 24.5
+    step: .5
+    mode: slider
+    unit_of_measurement: °C
+  critical_temp_sensor:
+    name: Critical Temperature
+    min: 0
+    max: 100
+    step: .5
+    initial: 20
+    mode: slider
+    unit_of_measurement: °C
+  indoor_pressure_sensor:
+    name: Pressure Sensor
+    min: 0
+    max: 108480
+    initial: 89500
+    unit_of_measurement: Pa
+
+sensor:
+  - platform: optimal_humidity
+    sensors:
+      test_optimal_humidity:
+        name: "Test Optimal Humidity"
+        type: optimal_humidity
+        indoor_temp_sensor: input_number.indoor_temp_sensor
+        indoor_humidity_sensor: input_number.indoor_humidity_sensor
+        critical_temp_sensor: input_number.critical_temp_sensor
+        indoor_pressure_sensor: input_number.indoor_pressure_sensor
