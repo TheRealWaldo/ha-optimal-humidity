@@ -8,27 +8,46 @@ on:
 
 jobs:
   validate:
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-latest
     name: Validate
     steps:
-      - uses: "actions/checkout@v2"
+      - uses: actions/checkout@v2
 
       - name: HACS validation
-        uses: "hacs/action@main"
+        uses: hacs/action@main
         with:
-          category: "integration"
+          category: integration
           ignore: brands wheels hacs
 
       - name: Hassfest validation
-        uses: "home-assistant/actions/hassfest@master"
+        uses: home-assistant/actions/hassfest@master
 
   style:
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-latest
     name: Check style formatting
     steps:
-      - uses: "actions/checkout@v2"
-      - uses: "actions/setup-python@v2.2.2"
+      - uses: actions/checkout@v2
+
+      - name: Setup node.js
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: 12
+
+      - name: Install dependencies
+        run: npm install @commitlint/config-conventional
+
+      - name: Pull request linter action
+        uses: JulienKode/pull-request-name-linter-action@v0.2.0
+
+      - name: Commit Linter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: wagoid/commitlint-github-action@v3.1.4
+
+      - uses: actions/setup-python@v2.2.2
         with:
           python-version: "3.x"
+
       - run: python3 -m pip install black
+
       - run: black .
