@@ -1,0 +1,7 @@
+{
+  "name": "Optimal Humidity",
+  "country": "CA",
+  "domains": ["sensor"],
+  "render_readme": true,
+  "iot_class": ["Assumed State", "Local Push"]
+}
