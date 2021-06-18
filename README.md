@@ -14,7 +14,7 @@ Home Assistant Utility Sensor to assist with maintaining the optimal humidity in
 If you want to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md)
 
 
-[commits]: https://github.com/TheRealWaldo/ha-optimal-humidity/commits/master
+[commits]: https://github.com/TheRealWaldo/ha-optimal-humidity/commits/main
 [commits-shield]: https://img.shields.io/github/commit-activity/y/custom-components/blueprint.svg?style=for-the-badge
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint
 [license-shield]: https://img.shields.io/github/license/custom-components/blueprint.svg?style=for-the-badge
