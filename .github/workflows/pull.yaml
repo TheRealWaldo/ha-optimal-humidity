@@ -2,9 +2,6 @@ name: Pull actions
 
 on:
   pull_request:
-  push:
-    branches:
-      - master
 
 jobs:
   validate:
