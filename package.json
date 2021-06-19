@@ -1,0 +1,24 @@
+{
+  "name": "ha-optimal-humidity",
+  "version": "0.0.1",
+  "description": "CI Dependencies for ha-optimal-humidity",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheRealWaldo/ha-optimal-humidity.git"
+  },
+  "author": "TheRealWaldo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TheRealWaldo/ha-optimal-humidity/issues"
+  },
+  "homepage": "https://github.com/TheRealWaldo/ha-optimal-humidity#readme",
+  "devDependencies": {
+    "@commitlint/config-conventional": "^12.1.4",
+    "@release-it/bumper": "^2.0.0",
+    "@release-it/conventional-changelog": "^3.0.1",
+    "release-it": "^14.9.0"
+  }
+}
