@@ -1,8 +1,11 @@
-name: Cron actions
+name: Validate Actions
 
 on:
   schedule:
     - cron: "0 0 * * *"
+  push:
+    branches:
+      - main
 
 jobs:
   validate:
