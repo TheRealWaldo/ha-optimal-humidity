@@ -42,7 +42,7 @@ jobs:
 
       - name: Bump version
         id: bump-version
-        uses: TheRealWaldo/release-it@v0.2.6
+        uses: TheRealWaldo/release-it@v0.3.0
         with:
           github-token: ${{ secrets.AUTO_PAT }}
           github-username: TRW-bot
@@ -58,3 +58,6 @@ jobs:
           source_branch: release
           destination_branch: main
           pr_draft: true
+          pr_assignee: TheRealWaldo
+          pr_title: "chore(release): ${{steps.bump-version.outputs.version}}"
+          pr_body: ${{steps.bump-version.outputs.changelog}}
