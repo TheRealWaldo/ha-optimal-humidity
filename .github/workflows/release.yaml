@@ -39,4 +39,5 @@ jobs:
         with:
           github_token: ${{ secrets.AUTO_PAT }}
           source_branch: release
-          destination_branch: "main"
+          destination_branch: main
+          pr_draft: true
