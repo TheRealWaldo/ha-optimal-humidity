@@ -3,12 +3,9 @@ name: Validate Actions
 on:
   schedule:
     - cron: "0 0 * * *"
-  push:
-    branches:
-      - main
 
 jobs:
-  validate:
+  cron-validate:
     runs-on: ubuntu-latest
     name: Validate
     steps:
