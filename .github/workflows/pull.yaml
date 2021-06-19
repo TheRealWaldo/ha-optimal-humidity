@@ -34,7 +34,7 @@ jobs:
           node-version: 12
 
       - name: Install dependencies
-        run: npm install @commitlint/config-conventional
+        run: npm ci
 
       - name: Pull request linter action
         uses: JulienKode/pull-request-name-linter-action@v0.2.0
