@@ -18,7 +18,7 @@
   },
   "npm": {
     "publish": false,
-    "ignoreVersion": false
+    "ignoreVersion": true
   },
   "plugins": {
     "@release-it/bumper": {
