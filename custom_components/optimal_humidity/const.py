@@ -13,7 +13,7 @@ from homeassistant.const import (
 NAME = "Optimal Humidity"
 DOMAIN = "optimal_humidity"
 DOMAIN_DATA = f"{DOMAIN}_data"
-VERSION = "0.0.1"
+VERSION = "0.0.2"
 ISSUE_URL = "https://github.com/TheRealWaldo/ha-optimal-humidity/issues"
 
 ATTR_DEWPOINT = "dewpoint"

@@ -1,6 +1,6 @@
 {
   "name": "ha-optimal-humidity",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "CI Dependencies for ha-optimal-humidity",
   "scripts": {
