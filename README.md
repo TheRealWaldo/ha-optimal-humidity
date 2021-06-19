@@ -17,5 +17,5 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 [license-shield]: https://img.shields.io/github/license/therealwaldo/ha-optimal-humidity.svg?style=for-the-badge
 [hacs]: https://github.com/custom-components/hacs
 [hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
-[releases-shield]: https://img.shields.io/github/releases/therealwaldo/ha-optimal-humidity.svg?style=for-the-badge
+[releases-shield]: https://img.shields.io/github/v/release/therealwaldo/ha-optimal-humidity?include_prereleases&style=for-the-badge
 [releases]: https://github.com/TheRealWaldo/ha-optimal-humidity/releases
