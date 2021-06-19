@@ -4,7 +4,7 @@
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
 [![License][license-shield]](LICENSE)
-[![Validate Actions][validate-shield]](validate)
+[![Validate Actions][validate-shield]][validate]
 
 Home Assistant Utility Sensor to assist with maintaining the optimal humidity in your home!
 
