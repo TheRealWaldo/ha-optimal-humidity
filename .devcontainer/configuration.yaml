@@ -14,11 +14,6 @@ homeassistant:
   time_zone: America/Edmonton
   elevation: 1045
   auth_providers:
-    - type: trusted_networks
-      trusted_networks:
-        - 127.0.0.1
-        - ::1
-      allow_bypass_login: true
     - type: homeassistant
 
 input_number:
