@@ -51,7 +51,7 @@ SENSOR_SCHEMA = vol.Schema(
         vol.Required(CONF_INDOOR_HUMIDITY): cv.entity_id,
         vol.Optional(CONF_INDOOR_PRESSURE): cv.entity_id,
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
-        vol.Optional(CONF_TYPE, default=SENSOR_TYPES[ATTR_CRITICAL_HUMIDITY]): vol.All(
+        vol.Optional(CONF_TYPE, default=ATTR_OPTIMAL_HUMIDITY): vol.All(
             cv.string,
             vol.In(
                 (
