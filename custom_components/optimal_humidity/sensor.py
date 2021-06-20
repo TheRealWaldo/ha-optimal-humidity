@@ -17,6 +17,8 @@ from .const import (
     ATTR_DEWPOINT,
     ATTR_ABSOLUTE_HUMIDITY,
     ATTR_MOLD_WARNING,
+    CONF_OPTIMAL_ABSOLUTE_HUMIDITY,
+    DEFAULT_OPTIMAL_ABSOLUTE_HUMIDITY,
 )
 from homeassistant import util
 from homeassistant.components.sensor import (
@@ -62,6 +64,9 @@ SENSOR_SCHEMA = vol.Schema(
                 )
             ),
         ),
+        vol.Optional(
+            CONF_OPTIMAL_ABSOLUTE_HUMIDITY, default=DEFAULT_OPTIMAL_ABSOLUTE_HUMIDITY
+        ): cv.positive_float,
     }
 )
 
@@ -82,6 +87,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
         indoor_humidity_sensor = device_config.get(CONF_INDOOR_HUMIDITY)
         indoor_pressure_sensor = device_config.get(CONF_INDOOR_PRESSURE)
         sensor_type = device_config.get(CONF_TYPE)
+        optimal_absolute_humidity = device_config.get(CONF_OPTIMAL_ABSOLUTE_HUMIDITY)
 
         async_add_entities(
             [
@@ -94,6 +100,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
                     indoor_humidity_sensor,
                     indoor_pressure_sensor,
                     sensor_type,
+                    optimal_absolute_humidity,
                 )
             ],
             False,
@@ -113,6 +120,7 @@ class OptimalHumidity(Entity):
         indoor_humidity_sensor,
         indoor_pressure_sensor,
         sensor_type,
+        optimal_absolute_humidity,
     ):
         """Initialize the sensor."""
         self.hass = hass
@@ -143,6 +151,7 @@ class OptimalHumidity(Entity):
         self._crit_hum = None
         self._optimal_humidity = None
         self._mold_warning = None
+        self._optimal_absolute_humidity = optimal_absolute_humidity
 
     async def async_added_to_hass(self):
         """Register callbacks."""
@@ -319,7 +328,6 @@ class OptimalHumidity(Entity):
         """Parse pressure sensor value."""
         _LOGGER.debug("Updating pressure sensor with value %s", state.state)
 
-        # Return an error if the sensor change its state to Unknown.
         if state.state == STATE_UNKNOWN:
             _LOGGER.warning(
                 "Unable to parse pressure sensor %s, state: %s",
@@ -432,7 +440,6 @@ class OptimalHumidity(Entity):
             psychrolib.GetRelHumFromTDewPoint(self._crit_temp, self._dewpoint) * 100
         )
 
-        # check bounds and format
         if crit_humidity > 100:
             self._crit_hum = 100
         elif crit_humidity < 0:
@@ -466,10 +473,10 @@ class OptimalHumidity(Entity):
 
         psychrolib.SetUnitSystem(psychrolib.SI)
 
-        # 7g/m³ seems to be comfortable
-        # TODO: Make this configurable
         comfortable_humidity = psychrolib.GetRelHumFromHumRatio(
-            self._indoor_temp, 7 / 1000, self._indoor_pressure
+            self._indoor_temp,
+            float(self._optimal_absolute_humidity) / 1000,
+            self._indoor_pressure,
         )
         comfortable_dew_point = psychrolib.GetTDewPointFromRelHum(
             self._crit_temp, comfortable_humidity

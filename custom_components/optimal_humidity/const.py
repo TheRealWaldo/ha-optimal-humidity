@@ -26,6 +26,9 @@ CONF_CRITICAL_TEMP = "critical_temp_sensor"
 CONF_INDOOR_HUMIDITY = "indoor_humidity_sensor"
 CONF_INDOOR_TEMP = "indoor_temp_sensor"
 CONF_INDOOR_PRESSURE = "indoor_pressure_sensor"
+CONF_OPTIMAL_ABSOLUTE_HUMIDITY = "optimal_absolute_humidity"
+# 7g/m³ seems to be a comfortable default
+DEFAULT_OPTIMAL_ABSOLUTE_HUMIDITY = 7
 
 DEFAULT_NAME = "Optimal Humidity"
 
