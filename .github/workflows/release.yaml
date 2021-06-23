@@ -6,24 +6,8 @@ on:
       - main
 
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    name: Validate
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: HACS validation
-        uses: hacs/action@main
-        with:
-          category: integration
-          ignore: brands wheels hacs
-
-      - name: Hassfest validation
-        uses: home-assistant/actions/hassfest@master
-
   release-action:
     runs-on: ubuntu-latest
-    needs: validate
     name: Release action
     if: "github.ref == 'refs/heads/main' && !contains(toJSON(github.event.commits.*.message), 'chore(release)')"
     steps:
