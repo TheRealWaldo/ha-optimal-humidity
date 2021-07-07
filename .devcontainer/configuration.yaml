@@ -56,11 +56,11 @@ sensor:
         indoor_humidity_sensor: input_number.indoor_humidity_sensor
         critical_temp_sensor: input_number.critical_temp_sensor
         indoor_pressure_sensor: input_number.indoor_pressure_sensor
-      test_optimal_humidity_higher_absolute:
-        name: "Test Optimal Humidity With Higher Absolute"
+      test_optimal_humidity_higher_specific:
+        name: "Test Optimal Humidity With Higher Specific Humidity"
         type: optimal_humidity
         indoor_temp_sensor: input_number.indoor_temp_sensor
         indoor_humidity_sensor: input_number.indoor_humidity_sensor
         critical_temp_sensor: input_number.critical_temp_sensor
         indoor_pressure_sensor: input_number.indoor_pressure_sensor
-        optimal_absolute_humidity: 7.5
+        optimal_specific_humidity: 7.5
