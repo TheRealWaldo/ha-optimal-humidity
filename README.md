@@ -76,7 +76,7 @@ sensor:
 ### Attributes
 
 |Attribute|Unit|Description
-|:---|---
+|:---|---|---
 | `dewpoint` | °C/°F | Dewpoint from the `indoor_temp_sensor` and `indoor_humidity_sensor` and `indoor_pressure_sensor` combined.
 | `optimal_humidity` | % | The optimal set point in relative humidity for a humidifier or dehumidifier.
 | `specific_humidity` | grams of H₂O per gram of Air⁻¹ | Specific humidity from the `indoor_temp_sensor` and `indoor_humidity_sensor` and `indoor_pressure_sensor` combined.
