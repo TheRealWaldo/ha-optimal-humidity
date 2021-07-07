@@ -3,7 +3,7 @@ default_config:
 logger:
   default: info
   logs:
-    custom_components.ha_optimal_humidity: debug
+    custom_components.optimal_humidity: debug
 
 # If you need to debug uncommment the line below (doc: https://www.home-assistant.io/integrations/debugpy/)
 # debugpy:
@@ -66,10 +66,17 @@ sensor:
         indoor_pressure_sensor: input_number.indoor_pressure_sensor
         optimal_specific_humidity: 7.5
 
-      test_sepcific_humidity:
-        name: "Test Optimal Humidity With Higher Specific Humidity"
+      test_specific_humidity:
+        name: "Test Specific Humidity"
         type: specific_humidity
         indoor_temp_sensor: input_number.indoor_temp_sensor
         indoor_humidity_sensor: input_number.indoor_humidity_sensor
         critical_temp_sensor: input_number.critical_temp_sensor
         indoor_pressure_sensor: input_number.indoor_pressure_sensor
+
+      test_pressure_from_altitude:
+        name: "Test Pressure from Altitude"
+        type: specific_humidity
+        indoor_temp_sensor: input_number.indoor_temp_sensor
+        indoor_humidity_sensor: input_number.indoor_humidity_sensor
+        critical_temp_sensor: input_number.critical_temp_sensor
