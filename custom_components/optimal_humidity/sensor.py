@@ -17,6 +17,7 @@ from .const import (
     ATTR_DEWPOINT,
     ATTR_SPECIFIC_HUMIDITY,
     ATTR_MOLD_WARNING,
+    ATTR_HUMIDEX,
     CONF_OPTIMAL_SPECIFIC_HUMIDITY,
     DEFAULT_OPTIMAL_SPECIFIC_HUMIDITY,
 )
@@ -62,6 +63,7 @@ SENSOR_SCHEMA = vol.Schema(
                     ATTR_CRITICAL_HUMIDITY,
                     ATTR_OPTIMAL_HUMIDITY,
                     ATTR_MOLD_WARNING,
+                    ATTR_HUMIDEX,
                 )
             ),
         ),
@@ -166,6 +168,7 @@ class OptimalHumidity(Entity):
         self._crit_hum = None
         self._optimal_humidity = None
         self._mold_warning = None
+        self._humidex = None
         self._optimal_specific_humidity = optimal_specific_humidity
 
     async def async_added_to_hass(self):
@@ -389,6 +392,7 @@ class OptimalHumidity(Entity):
         self._calc_specific_humidity()
         self._calc_optimal_humidity()
         self._set_mold_warning()
+        self._calc_humidex()
 
         self._set_state()
 
@@ -404,11 +408,27 @@ class OptimalHumidity(Entity):
             self._state = self._crit_hum
         elif self._sensor_type == ATTR_MOLD_WARNING:
             self._state = self._mold_warning
+        elif self._sensor_type == ATTR_HUMIDEX:
+            self._state = self._humidex
 
         if self._state is None:
             self._available = False
         else:
             self._available = True
+
+    def _calc_humidex(self):
+        """Calculate the humidex for the indoor air."""
+        # It equals H = T + (0.5555 * (e - 10)), where T is the temperature in Celsius and e is the vapor pressure in millibars (mb)
+        if None in (self._indoor_temp, self._indoor_hum):
+            self._humidex = None
+            return
+
+        psychrolib.SetUnitSystem(psychrolib.SI)
+        vapor_pressure = (
+            psychrolib.GetVapPresFromRelHum(self._indoor_temp, self._indoor_hum) * 0.01
+        )
+        humidex = self._indoor_temp + (0.5555 * (vapor_pressure - 10))
+        self._humidex = float(f"{humidex:.2f}")
 
     def _calc_dewpoint(self):
         """Calculate the dewpoint for the indoor air."""
@@ -581,11 +601,18 @@ class OptimalHumidity(Entity):
                 ATTR_OPTIMAL_HUMIDITY: self._optimal_humidity,
                 ATTR_CRITICAL_HUMIDITY: self._crit_hum,
                 ATTR_MOLD_WARNING: self._mold_warning,
+                ATTR_HUMIDEX: self._humidex,
             }
 
         dewpoint = (
             util.temperature.celsius_to_fahrenheit(self._dewpoint)
             if self._dewpoint is not None
+            else None
+        )
+
+        humidex = (
+            util.temperature.celsius_to_fahrenheit(self._humidex)
+            if self._humidex is not None
             else None
         )
 
@@ -595,4 +622,5 @@ class OptimalHumidity(Entity):
             ATTR_OPTIMAL_HUMIDITY: self._optimal_humidity,
             ATTR_CRITICAL_HUMIDITY: self._crit_hum,
             ATTR_MOLD_WARNING: self._mold_warning,
+            ATTR_HUMIDEX: humidex,
         }
