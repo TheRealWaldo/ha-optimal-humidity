@@ -415,7 +415,11 @@ class OptimalHumidity(Entity):
         psychrolib.SetUnitSystem(psychrolib.SI)
 
         specific_humidity = (
-            psychrolib.GetHumRatioFromTDewPoint(self._dewpoint, self._indoor_pressure)
+            psychrolib.GetSpecificHumFromHumRatio(
+                psychrolib.GetHumRatioFromTDewPoint(
+                    self._dewpoint, self._indoor_pressure
+                )
+            )
             * 1000
         )
         self._specific_humidity = float(f"{specific_humidity:.2f}")
