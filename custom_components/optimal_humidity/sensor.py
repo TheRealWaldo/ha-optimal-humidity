@@ -141,17 +141,22 @@ class OptimalHumidity(Entity):
                 hass.config.elevation
             )
             self._indoor_pressure_sensor = None
+            self._entities = {
+                self._indoor_temp_sensor,
+                self._critical_temp_sensor,
+                self._indoor_humidity_sensor,
+            }
         else:
             self._indoor_pressure_sensor = indoor_pressure_sensor
             self._indoor_pressure = None
+            self._entities = {
+                self._indoor_temp_sensor,
+                self._critical_temp_sensor,
+                self._indoor_humidity_sensor,
+                self._indoor_pressure_sensor,
+            }
 
         self._available = False
-        self._entities = {
-            self._indoor_temp_sensor,
-            self._critical_temp_sensor,
-            self._indoor_humidity_sensor,
-        }
-
         self._dewpoint = None
         self._specific_humidity = None
         self._indoor_temp = None
