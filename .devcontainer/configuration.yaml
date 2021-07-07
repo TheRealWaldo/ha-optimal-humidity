@@ -87,3 +87,10 @@ sensor:
         indoor_temp_sensor: input_number.indoor_temp_sensor
         indoor_humidity_sensor: input_number.indoor_humidity_sensor
         critical_temp_sensor: input_number.critical_temp_sensor
+
+      test_humidex_comfort:
+        name: "Test Humidex Comfort"
+        type: humidex_comfort
+        indoor_temp_sensor: input_number.indoor_temp_sensor
+        indoor_humidity_sensor: input_number.indoor_humidity_sensor
+        critical_temp_sensor: input_number.critical_temp_sensor
