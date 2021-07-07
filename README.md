@@ -5,7 +5,32 @@
 [![GitHub Activity][commits-shield]][commits]
 [![License][license-shield]](LICENSE)
 
-Home Assistant Utility Sensor to assist with maintaining the optimal humidity in your home!
+[Home Assistant](https:/home-assistant.io) Sensor Integration to assist with maintaining the optimal humidity in your home!
+
+Please see this [Discussion on Humidity](https://www.weather.gov/lmk/humidity) for a good overview of some of the terms used in this integration.
+
+Many signs of inadequate humidity levels can occur, but here are a few common examples:
+
+Too much humidity
+* Condensation on windows in winter
+* Uncomfortable feeling in summer
+* Moisture stains on walls
+* Musty smell
+* Mold
+
+Not enough humidity
+* Itchy eyes, nose, and skin
+* Dry skin and chapped lips
+* Static
+* Damaged wood floors
+
+Most systems use relative humidity as set-points for humidification systems, which of course, is relative to temperature.  That means setting a fixed relative humidity would also require a fixed temperature.  In an ideal world, we would maintain a fixed temperature, but in most environments, that comes at a high cost.
+
+Apparent temperature, or the temperature we feel, is also impacted by humidity.  Therefore, we can maintain a comfortable environment by controlling humidity more fluidly, and also control costs, as it is significantly less expensive to add humidity to the air than heat.
+
+In addition to how we feel, other organisms love humid environments, such as mold.  Mold can have detrimental effects on health and can do irreparable damage to your home.  Condensation on windows is also a factor. This sensor also considers these factors by allowing one to assign a critical temperature sensor for the coldest point in your controlled location.  For example, you can place critical temperature sensors at your window or on your basement floor.
+
+This sensor integration attempts to determine the optimal relative humidity set point for your humidifiers and dehumidifiers based on those factors.
 
 ## Installation
 
@@ -13,9 +38,7 @@ Home Assistant Utility Sensor to assist with maintaining the optimal humidity in
 
 1. Download the zip file from
    [latest release](https://github.com/TheRealWaldo/ha-optimal-humidity/releases/latest).
-2. Unpack the release and copy the `custom_components/optimal_humidity` directory
-   into the `custom_components` directory of your Home Assistant
-   installation.
+2. Unpack the release and copy the `custom_components/optimal_humidity` directory into the `custom_components` directory of your Home Assistant installation.
 3. Configure the `optimal_humidity` sensor.
 4. Restart Home Assistant.
 
@@ -50,7 +73,7 @@ sensor:
 
 ## Contributions are welcome!
 
-If you want to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md)
+If you want to contribute to this integration, please read the [Contribution guidelines](CONTRIBUTING.md)
 
 
 [commits]: https://github.com/TheRealWaldo/ha-optimal-humidity/commits/main
