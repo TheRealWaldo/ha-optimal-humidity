@@ -66,7 +66,7 @@ sensor:
 |Parameter |Required|Description
 |:---|---|---
 | `name` | No | Friendly name **Default**: Optimal Humidity
-| `type` | No | The type of sensor to use for the primary state.  One of `optimal_humidity`, `specific_humidity`, `dewpoint`, `critical_humidity`, `mold_warning`, or `humidex` **Default**: `optimal_humidity`
+| `type` | No | The type of sensor to use for the primary state.  One of `optimal_humidity`, `specific_humidity`, `dewpoint`, `critical_humidity`, `mold_warning`, `humidex`, or `humidex_comfort` **Default**: `optimal_humidity`
 | `indoor_temp_sensor` | Yes | Temperature sensor to use for calculations. Typically the warmest sensor in the room.
 | `critical_temp_sensor` | Yes | Temperature sensor to use for calculations to avoid mold and condensation. Typically the coldest sensor in the room.
 | `indoor_pressure_sensor` | No | Pressue sensor to use for calculations.  If not included, will use the elevation set in Home Assistant to calculate the Standard Air Pressure.
@@ -83,6 +83,7 @@ sensor:
 | `critical_humidity` | % | Calculated critical humidity at the coldest point in the room, using the `critical_temp_sensor`.
 | `mold_warningr` | boolean | Whether or not there is a risk of mold at either the critical point or the indoor sensor location.
 | `humidex` | °C/°F | Humidex usin the Canadian standard.
+| `humidex_comfort` | text | An english statement describing the current human comfort level base on the `humidex`.
 
 ## Contributions are welcome!
 

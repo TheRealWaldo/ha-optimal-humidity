@@ -1,5 +1,6 @@
 """Calculates critical humidity given critical temperature, current temperature and current humidity."""
 import logging
+import bisect
 
 import voluptuous as vol
 import psychrolib
@@ -17,6 +18,7 @@ from .const import (
     ATTR_SPECIFIC_HUMIDITY,
     ATTR_MOLD_WARNING,
     ATTR_HUMIDEX,
+    ATTR_HUMIDEX_COMFORT,
     CONF_OPTIMAL_SPECIFIC_HUMIDITY,
     DEFAULT_OPTIMAL_SPECIFIC_HUMIDITY,
 )
@@ -64,6 +66,7 @@ SENSOR_SCHEMA = vol.Schema(
                     ATTR_OPTIMAL_HUMIDITY,
                     ATTR_MOLD_WARNING,
                     ATTR_HUMIDEX,
+                    ATTR_HUMIDEX_COMFORT,
                 )
             ),
         ),
@@ -169,6 +172,7 @@ class OptimalHumidity(Entity):
         self._optimal_humidity = None
         self._mold_warning = None
         self._humidex = None
+        self._humidex_comfort = None
         self._optimal_specific_humidity = optimal_specific_humidity
 
     async def async_added_to_hass(self):
@@ -393,6 +397,7 @@ class OptimalHumidity(Entity):
         self._calc_optimal_humidity()
         self._set_mold_warning()
         self._calc_humidex()
+        self._calc_humidex_comfort()
 
         self._set_state()
 
@@ -410,11 +415,31 @@ class OptimalHumidity(Entity):
             self._state = self._mold_warning
         elif self._sensor_type == ATTR_HUMIDEX:
             self._state = self._humidex
+        elif self._sensor_type == ATTR_HUMIDEX_COMFORT:
+            self._state = self._humidex_comfort
 
         if self._state is None:
             self._available = False
         else:
             self._available = True
+
+    def _calc_humidex_comfort(self):
+        if self._humidex is None:
+            self._humidex_comfort = None
+            return
+
+        break_points = [29, 34, 39, 45, 54, 10000]
+        comfort_level = [
+            "Little or no discomfort",
+            "Noticeable discomfort",
+            "Evident discomfort",
+            "Intense discomfort; avoid exertion",
+            "Dangerous discomfort",
+            "Heat stroke probable",
+        ]
+        self._humidex_comfort = comfort_level[
+            bisect.bisect(break_points, self._humidex - 1)
+        ]
 
     def _calc_humidex(self):
         """Calculate the humidex for the indoor air."""
@@ -633,6 +658,7 @@ class OptimalHumidity(Entity):
                 ATTR_CRITICAL_HUMIDITY: self._crit_hum,
                 ATTR_MOLD_WARNING: self._mold_warning,
                 ATTR_HUMIDEX: self._humidex,
+                ATTR_HUMIDEX_COMFORT: self._humidex_comfort,
             }
 
         dewpoint = (
@@ -654,4 +680,5 @@ class OptimalHumidity(Entity):
             ATTR_CRITICAL_HUMIDITY: self._crit_hum,
             ATTR_MOLD_WARNING: self._mold_warning,
             ATTR_HUMIDEX: humidex,
+            ATTR_HUMIDEX_COMFORT: self._humidex_comfort,
         }
