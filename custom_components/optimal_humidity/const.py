@@ -34,25 +34,25 @@ DEFAULT_NAME = "Optimal Humidity"
 
 SENSOR_TYPES = {
     ATTR_DEWPOINT: (
-        "dewpoint",
+        ATTR_DEWPOINT,
         TEMP_CELSIUS,
         DEVICE_CLASS_TEMPERATURE,
         "hass:thermometer",
     ),
     ATTR_SPECIFIC_HUMIDITY: (
-        "specific_humidity",
+        ATTR_SPECIFIC_HUMIDITY,
         "g_H₂O g_Air⁻¹",
         "",
         "mdi:water",
     ),
     ATTR_OPTIMAL_HUMIDITY: (
-        "optimal_humidity",
+        ATTR_OPTIMAL_HUMIDITY,
         PERCENTAGE,
         DEVICE_CLASS_HUMIDITY,
         "mdi:water-percent",
     ),
     ATTR_CRITICAL_HUMIDITY: (
-        "critical_humidity",
+        ATTR_CRITICAL_HUMIDITY,
         PERCENTAGE,
         DEVICE_CLASS_HUMIDITY,
         "mdi:water-percent",
