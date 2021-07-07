@@ -15,10 +15,10 @@ from .const import (
     ATTR_OPTIMAL_HUMIDITY,
     ATTR_CRITICAL_HUMIDITY,
     ATTR_DEWPOINT,
-    ATTR_ABSOLUTE_HUMIDITY,
+    ATTR_SPECIFIC_HUMIDITY,
     ATTR_MOLD_WARNING,
-    CONF_OPTIMAL_ABSOLUTE_HUMIDITY,
-    DEFAULT_OPTIMAL_ABSOLUTE_HUMIDITY,
+    CONF_OPTIMAL_SPECIFIC_HUMIDITY,
+    DEFAULT_OPTIMAL_SPECIFIC_HUMIDITY,
 )
 from homeassistant import util
 from homeassistant.components.sensor import (
@@ -58,14 +58,14 @@ SENSOR_SCHEMA = vol.Schema(
             vol.In(
                 (
                     ATTR_DEWPOINT,
-                    ATTR_ABSOLUTE_HUMIDITY,
+                    ATTR_SPECIFIC_HUMIDITY,
                     ATTR_CRITICAL_HUMIDITY,
                     ATTR_OPTIMAL_HUMIDITY,
                 )
             ),
         ),
         vol.Optional(
-            CONF_OPTIMAL_ABSOLUTE_HUMIDITY, default=DEFAULT_OPTIMAL_ABSOLUTE_HUMIDITY
+            CONF_OPTIMAL_SPECIFIC_HUMIDITY, default=DEFAULT_OPTIMAL_SPECIFIC_HUMIDITY
         ): cv.positive_float,
     }
 )
@@ -87,7 +87,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
         indoor_humidity_sensor = device_config.get(CONF_INDOOR_HUMIDITY)
         indoor_pressure_sensor = device_config.get(CONF_INDOOR_PRESSURE)
         sensor_type = device_config.get(CONF_TYPE)
-        optimal_absolute_humidity = device_config.get(CONF_OPTIMAL_ABSOLUTE_HUMIDITY)
+        optimal_specific_humidity = device_config.get(CONF_OPTIMAL_SPECIFIC_HUMIDITY)
 
         async_add_entities(
             [
@@ -100,7 +100,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
                     indoor_humidity_sensor,
                     indoor_pressure_sensor,
                     sensor_type,
-                    optimal_absolute_humidity,
+                    optimal_specific_humidity,
                 )
             ],
             False,
@@ -120,7 +120,7 @@ class OptimalHumidity(Entity):
         indoor_humidity_sensor,
         indoor_pressure_sensor,
         sensor_type,
-        optimal_absolute_humidity,
+        optimal_specific_humidity,
     ):
         """Initialize the sensor."""
         self.hass = hass
@@ -143,7 +143,7 @@ class OptimalHumidity(Entity):
         }
 
         self._dewpoint = None
-        self._absolute_humidity = None
+        self._specific_humidity = None
         self._indoor_pressure = None
         self._indoor_temp = None
         self._indoor_hum = None
@@ -151,7 +151,7 @@ class OptimalHumidity(Entity):
         self._crit_hum = None
         self._optimal_humidity = None
         self._mold_warning = None
-        self._optimal_absolute_humidity = optimal_absolute_humidity
+        self._optimal_specific_humidity = optimal_specific_humidity
 
     async def async_added_to_hass(self):
         """Register callbacks."""
@@ -369,7 +369,7 @@ class OptimalHumidity(Entity):
         self._calc_dewpoint()
         # TODO: Discover critical temperature from a list of provided sensors (lowest/highest?)
         self._calc_critical_humidity()
-        self._calc_absolute_humidity()
+        self._calc_specific_humidity()
         self._calc_optimal_humidity()
         self._set_mold_warning()
 
@@ -379,8 +379,8 @@ class OptimalHumidity(Entity):
         """Set state based on sensor type"""
         if self._sensor_type == ATTR_DEWPOINT:
             self._state = self._dewpoint
-        elif self._sensor_type == ATTR_ABSOLUTE_HUMIDITY:
-            self._state = self._absolute_humidity
+        elif self._sensor_type == ATTR_SPECIFIC_HUMIDITY:
+            self._state = self._specific_humidity
         elif self._sensor_type == ATTR_OPTIMAL_HUMIDITY:
             self._state = self._optimal_humidity
         elif self._sensor_type == ATTR_CRITICAL_HUMIDITY:
@@ -406,21 +406,21 @@ class OptimalHumidity(Entity):
 
         _LOGGER.debug("Dewpoint: %f %s", self._dewpoint, TEMP_CELSIUS)
 
-    def _calc_absolute_humidity(self):
-        """Calculate the absolute humidity in the room."""
+    def _calc_specific_humidity(self):
+        """Calculate the specific humidity in the room."""
         if None in (self._dewpoint, self._indoor_pressure):
-            self._absolute_humidity = None
+            self._specific_humidity = None
             return
 
         psychrolib.SetUnitSystem(psychrolib.SI)
 
-        absolute_humidity = (
+        specific_humidity = (
             psychrolib.GetHumRatioFromTDewPoint(self._dewpoint, self._indoor_pressure)
             * 1000
         )
-        self._absolute_humidity = float(f"{absolute_humidity:.2f}")
+        self._specific_humidity = float(f"{specific_humidity:.2f}")
 
-        _LOGGER.debug("Absolute humidity: %s", self._absolute_humidity)
+        _LOGGER.debug("Specific humidity: %s", self._specific_humidity)
 
     def _calc_critical_humidity(self):
         """Calculate the humidity at the critical temperature."""
@@ -475,7 +475,7 @@ class OptimalHumidity(Entity):
 
         comfortable_humidity = psychrolib.GetRelHumFromHumRatio(
             self._indoor_temp,
-            float(self._optimal_absolute_humidity) / 1000,
+            float(self._optimal_specific_humidity) / 1000,
             self._indoor_pressure,
         )
         comfortable_dew_point = psychrolib.GetTDewPointFromRelHum(
@@ -554,7 +554,7 @@ class OptimalHumidity(Entity):
         if self._is_metric:
             return {
                 ATTR_DEWPOINT: self._dewpoint,
-                ATTR_ABSOLUTE_HUMIDITY: self._absolute_humidity,
+                ATTR_SPECIFIC_HUMIDITY: self._specific_humidity,
                 ATTR_OPTIMAL_HUMIDITY: self._optimal_humidity,
                 ATTR_CRITICAL_HUMIDITY: self._crit_hum,
                 ATTR_MOLD_WARNING: self._mold_warning,
@@ -568,7 +568,7 @@ class OptimalHumidity(Entity):
 
         return {
             ATTR_DEWPOINT: dewpoint,
-            ATTR_ABSOLUTE_HUMIDITY: self._absolute_humidity,
+            ATTR_SPECIFIC_HUMIDITY: self._specific_humidity,
             ATTR_OPTIMAL_HUMIDITY: self._optimal_humidity,
             ATTR_CRITICAL_HUMIDITY: self._crit_hum,
             ATTR_MOLD_WARNING: self._mold_warning,

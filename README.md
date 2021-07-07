@@ -41,12 +41,12 @@ sensor:
 |Parameter |Required|Description
 |:---|---|---
 | `name` | No | Friendly name **Default**: Optimal Humidity
-| `type` | No | The type of sensor to use for the primary state.  One of `optimal_humidity`, `absolute_humidity`, `dewpoint`, `critical_humidity`, or `mold_warning` **Default**: `optimal_humidity`
+| `type` | No | The type of sensor to use for the primary state.  One of `optimal_humidity`, `specific_humidity`, `dewpoint`, `critical_humidity`, or `mold_warning` **Default**: `optimal_humidity`
 | `indoor_temp_sensor` | Yes | Temperature sensor to use for calculations. Typically the warmest sensor in the room.
 | `critical_temp_sensor` | Yes | Temperature sensor to use for calculations. Typically the coldest sensor in the room.
 | `indoor_pressure_sensor` | No | Pressue sensor to use for calculations.
 | `indoor_humidity_sensor` | Yes | Humidity sensor to use for calculations. Typically in the same location as the `indoor_temp_sensor`.
-| `optimal_absolute_humidity` | No | Optimal abolute humidity in grams of H₂O per gram of Air⁻¹ **Default**: 7
+| `optimal_specific_humidity` | No | Optimal specific humidity in grams of H₂O per gram of Air⁻¹ **Default**: 7
 
 ## Contributions are welcome!
 
