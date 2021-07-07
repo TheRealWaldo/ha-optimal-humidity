@@ -30,6 +30,8 @@ Apparent temperature, or the temperature we feel, is also impacted by humidity. 
 
 In addition to how we feel, other organisms love humid environments, such as mold.  Mold can have detrimental effects on health and can do irreparable damage to your home.  Condensation on windows is also a factor. This sensor also considers these factors by allowing one to assign a critical temperature sensor for the coldest point in your controlled location.  For example, you can place critical temperature sensors at your window or on your basement floor.
 
+Another factor that influences humidity that is not often considered is air pressure.
+
 This sensor integration attempts to determine the optimal relative humidity set point for your humidifiers and dehumidifiers based on those factors.
 
 ## Installation
@@ -66,8 +68,8 @@ sensor:
 | `name` | No | Friendly name **Default**: Optimal Humidity
 | `type` | No | The type of sensor to use for the primary state.  One of `optimal_humidity`, `specific_humidity`, `dewpoint`, `critical_humidity`, or `mold_warning` **Default**: `optimal_humidity`
 | `indoor_temp_sensor` | Yes | Temperature sensor to use for calculations. Typically the warmest sensor in the room.
-| `critical_temp_sensor` | Yes | Temperature sensor to use for calculations. Typically the coldest sensor in the room.
-| `indoor_pressure_sensor` | No | Pressue sensor to use for calculations.
+| `critical_temp_sensor` | Yes | Temperature sensor to use for calculations to avoid mold and condensation. Typically the coldest sensor in the room.
+| `indoor_pressure_sensor` | No | Pressue sensor to use for calculations.  If not included, will use the elevation set in Home Assistant to calculate the Standard Air Pressure.
 | `indoor_humidity_sensor` | Yes | Humidity sensor to use for calculations. Typically in the same location as the `indoor_temp_sensor`.
 | `optimal_specific_humidity` | No | Optimal specific humidity in grams of H₂O per gram of Air⁻¹ **Default**: 7
 
