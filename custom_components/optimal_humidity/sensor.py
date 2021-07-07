@@ -39,6 +39,7 @@ from homeassistant.const import (
     STATE_UNKNOWN,
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
+    DEVICE_CLASS_TEMPERATURE,
 )
 from homeassistant.core import callback
 import homeassistant.helpers.config_validation as cv
@@ -559,7 +560,8 @@ class OptimalHumidity(Entity):
     @property
     def unit_of_measurement(self):
         """Return the unit of measurement."""
-        if self._sensor_type == ATTR_DEWPOINT:
+
+        if SENSOR_TYPES[self._sensor_type][3] == DEVICE_CLASS_TEMPERATURE:
             if self._is_metric:
                 return TEMP_CELSIUS
             return TEMP_FAHRENHEIT
