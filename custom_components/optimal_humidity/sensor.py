@@ -1,6 +1,5 @@
 """Calculates critical humidity given critical temperature, current temperature and current humidity."""
 import logging
-import math
 
 import voluptuous as vol
 import psychrolib
