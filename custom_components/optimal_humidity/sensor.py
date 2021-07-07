@@ -525,19 +525,45 @@ class OptimalHumidity(Entity):
             float(self._optimal_specific_humidity) / 1000,
             self._indoor_pressure,
         )
+        _LOGGER.debug("Comfortable relative humidity is: %s", comfortable_humidity)
+        if comfortable_humidity > 1:
+            _LOGGER.warn(
+                "Not possible to reach a comfortable humidity at %s%s, will feel dry.",
+                self._indoor_temp,
+                TEMP_CELSIUS,
+            )
+            comfortable_humidity = 1
+
         comfortable_dew_point = psychrolib.GetTDewPointFromRelHum(
             self._crit_temp, comfortable_humidity
         )
-        critical_humidity = psychrolib.GetRelHumFromTDewPoint(
-            self._indoor_temp, comfortable_dew_point
-        )
+
+        if comfortable_dew_point > self._indoor_temp:
+            _LOGGER.debug("Comfortable dewpoint is above indoor dry bulb temperature")
+            critical_humidity = 1
+        else:
+            critical_humidity = psychrolib.GetRelHumFromTDewPoint(
+                self._indoor_temp, comfortable_dew_point
+            )
 
         if critical_humidity > 0.6:
-            # given condensation + mold forms at 60% RH at the _crit_temp; get dew point
+            # given condensation + mold forms at or above 60% RH at the _crit_temp; get dew point
             dew_point = psychrolib.GetTDewPointFromRelHum(self._crit_temp, 0.6)
-            optimal_humidity = (
-                psychrolib.GetRelHumFromTDewPoint(self._indoor_temp, dew_point) * 100
-            )
+            if dew_point > self._indoor_temp:
+                _LOGGER.warn(
+                    "Not possible to reach a mold free humidity at %s%s given a critical temperature of %s%s",
+                    self._indoor_temp,
+                    TEMP_CELSIUS,
+                    self._crit_temp,
+                    TEMP_CELSIUS,
+                )
+                self._optimal_humidity = None
+                return
+            else:
+                optimal_humidity = (
+                    psychrolib.GetRelHumFromTDewPoint(self._indoor_temp, dew_point)
+                    * 100
+                )
         else:
             optimal_humidity = comfortable_humidity * 100
 
