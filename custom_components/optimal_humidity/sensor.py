@@ -61,6 +61,7 @@ SENSOR_SCHEMA = vol.Schema(
                     ATTR_SPECIFIC_HUMIDITY,
                     ATTR_CRITICAL_HUMIDITY,
                     ATTR_OPTIMAL_HUMIDITY,
+                    ATTR_MOLD_WARNING,
                 )
             ),
         ),
@@ -401,6 +402,8 @@ class OptimalHumidity(Entity):
             self._state = self._optimal_humidity
         elif self._sensor_type == ATTR_CRITICAL_HUMIDITY:
             self._state = self._crit_hum
+        elif self._sensor_type == ATTR_MOLD_WARNING:
+            self._state = self._mold_warning
 
         if self._state is None:
             self._available = False
