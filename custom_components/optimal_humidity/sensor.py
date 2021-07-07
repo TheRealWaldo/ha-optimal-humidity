@@ -132,9 +132,19 @@ class OptimalHumidity(Entity):
         self._indoor_temp_sensor = indoor_temp_sensor
         self._indoor_humidity_sensor = indoor_humidity_sensor
         self._critical_temp_sensor = critical_temp_sensor
-        self._indoor_pressure_sensor = indoor_pressure_sensor
         self._sensor_type = sensor_type
         self._is_metric = hass.config.units.is_metric
+
+        if indoor_pressure_sensor is None:
+            psychrolib.SetUnitSystem(psychrolib.SI)
+            self._indoor_pressure = psychrolib.GetStandardAtmPressure(
+                hass.config.elevation
+            )
+            self._indoor_pressure_sensor = None
+        else:
+            self._indoor_pressure_sensor = indoor_pressure_sensor
+            self._indoor_pressure = None
+
         self._available = False
         self._entities = {
             self._indoor_temp_sensor,
@@ -144,7 +154,6 @@ class OptimalHumidity(Entity):
 
         self._dewpoint = None
         self._specific_humidity = None
-        self._indoor_pressure = None
         self._indoor_temp = None
         self._indoor_hum = None
         self._crit_temp = None
@@ -186,7 +195,8 @@ class OptimalHumidity(Entity):
             indoor_temp = self.hass.states.get(self._indoor_temp_sensor)
             crit_temp = self.hass.states.get(self._critical_temp_sensor)
             indoor_hum = self.hass.states.get(self._indoor_humidity_sensor)
-            indoor_pressure = self.hass.states.get(self._indoor_pressure_sensor)
+            if self._indoor_pressure_sensor is not None:
+                indoor_pressure = self.hass.states.get(self._indoor_pressure_sensor)
 
             schedule_update = self._update_sensor(
                 self._indoor_temp_sensor, None, indoor_temp
@@ -206,13 +216,14 @@ class OptimalHumidity(Entity):
                 else schedule_update
             )
 
-            schedule_update = (
-                False
-                if not self._update_sensor(
-                    self._indoor_pressure_sensor, None, indoor_pressure
+            if self._indoor_pressure_sensor is not None:
+                schedule_update = (
+                    False
+                    if not self._update_sensor(
+                        self._indoor_pressure_sensor, None, indoor_pressure
+                    )
+                    else schedule_update
                 )
-                else schedule_update
-            )
 
             if schedule_update:
                 self.async_schedule_update_ha_state(True)
