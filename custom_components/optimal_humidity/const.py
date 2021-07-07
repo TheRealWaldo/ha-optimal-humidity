@@ -21,6 +21,7 @@ ATTR_SPECIFIC_HUMIDITY = "specific_humidity"
 ATTR_OPTIMAL_HUMIDITY = "optimal_humidity"
 ATTR_CRITICAL_HUMIDITY = "critical_humidity"
 ATTR_MOLD_WARNING = "mold_warning"
+ATTR_HUMIDEX = "humidex"
 
 CONF_CRITICAL_TEMP = "critical_temp_sensor"
 CONF_INDOOR_HUMIDITY = "indoor_humidity_sensor"
@@ -56,6 +57,12 @@ SENSOR_TYPES = {
         PERCENTAGE,
         DEVICE_CLASS_HUMIDITY,
         "mdi:water-percent",
+    ),
+    ATTR_HUMIDEX: (
+        ATTR_HUMIDEX,
+        TEMP_CELSIUS,
+        DEVICE_CLASS_TEMPERATURE,
+        "hass:thermometer",
     ),
 }
 
