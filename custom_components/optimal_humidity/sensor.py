@@ -479,10 +479,14 @@ class OptimalHumidity(Entity):
             self._available = False
             return
 
-        psychrolib.SetUnitSystem(psychrolib.SI)
-        crit_humidity = (
-            psychrolib.GetRelHumFromTDewPoint(self._crit_temp, self._dewpoint) * 100
-        )
+        if self._dewpoint > self._crit_temp:
+            _LOGGER.debug("Dewpoint is above dry bulb temperature")
+            crit_humidity = 100
+        else:
+            psychrolib.SetUnitSystem(psychrolib.SI)
+            crit_humidity = (
+                psychrolib.GetRelHumFromTDewPoint(self._crit_temp, self._dewpoint) * 100
+            )
 
         if crit_humidity > 100:
             self._crit_hum = 100
