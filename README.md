@@ -71,6 +71,16 @@ sensor:
 | `indoor_humidity_sensor` | Yes | Humidity sensor to use for calculations. Typically in the same location as the `indoor_temp_sensor`.
 | `optimal_specific_humidity` | No | Optimal specific humidity in grams of H₂O per gram of Air⁻¹ **Default**: 7
 
+### Attributes
+
+|Attribute|Unit|Description
+|:---|---
+| `dewpoint` | °C/°F | Dewpoint from the `indoor_temp_sensor` and `indoor_humidity_sensor` and `indoor_pressure_sensor` combined.
+| `optimal_humidity` | % | The optimal set point in relative humidity for a humidifier or dehumidifier.
+| `specific_humidity` | grams of H₂O per gram of Air⁻¹ | Specific humidity from the `indoor_temp_sensor` and `indoor_humidity_sensor` and `indoor_pressure_sensor` combined.
+| `critical_humidity` | % | Calculated critical humidity at the coldest point in the room, using the `critical_temp_sensor`.
+| `mold_warningr` | boolean | Whether or not there is a risk of mold at either the critical point or the indoor sensor location.
+
 ## Contributions are welcome!
 
 If you want to contribute to this integration, please read the [Contribution guidelines](CONTRIBUTING.md)
