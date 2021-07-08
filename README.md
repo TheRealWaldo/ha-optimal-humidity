@@ -85,6 +85,7 @@ sensor:
 | `mold_warningr` | boolean | Whether or not there is a risk of mold at either the critical point or the indoor sensor location.
 | `humidex` | °C/°F | Humidex usin the Canadian standard.
 | `humidex_comfort` | text | An english statement describing the current human comfort level base on the `humidex`.
+| `optimal_humidex` | °C/°F | Humidex at the `optimal_humidity` with the current temperature from `indoor_temp_sensor`.
 
 ## Contributions are welcome!
 
