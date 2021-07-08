@@ -595,7 +595,9 @@ class OptimalHumidity(Entity):
 
         comfortable_humidity = psychrolib.GetRelHumFromHumRatio(
             self._indoor_temp,
-            float(self._optimal_specific_humidity) / 1000,
+            psychrolib.GetHumRatioFromSpecificHum(
+                self._optimal_specific_humidity / 1000
+            ),
             self._indoor_pressure,
         )
         _LOGGER.debug("Comfortable relative humidity is: %s", comfortable_humidity)
