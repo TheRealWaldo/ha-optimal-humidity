@@ -11,6 +11,9 @@ from .const import (
     CONF_INDOOR_HUMIDITY,
     CONF_CRITICAL_TEMP,
     CONF_INDOOR_PRESSURE,
+    GRAMS_OF_WATER_TO_GRAMS_OF_AIR,
+    IDEAL_HUMIDITY,
+    IDEAL_TEMPERATURE,
     SENSOR_TYPES,
     ATTR_OPTIMAL_HUMIDITY,
     ATTR_CRITICAL_HUMIDITY,
@@ -20,7 +23,7 @@ from .const import (
     ATTR_HUMIDEX,
     ATTR_HUMIDEX_COMFORT,
     CONF_OPTIMAL_SPECIFIC_HUMIDITY,
-    DEFAULT_OPTIMAL_SPECIFIC_HUMIDITY,
+    ATTR_OPTIMAL_SPECIFIC_HUMIDITY,
 )
 from homeassistant import util
 from homeassistant.components.sensor import (
@@ -67,12 +70,11 @@ SENSOR_SCHEMA = vol.Schema(
                     ATTR_MOLD_WARNING,
                     ATTR_HUMIDEX,
                     ATTR_HUMIDEX_COMFORT,
+                    ATTR_OPTIMAL_SPECIFIC_HUMIDITY,
                 )
             ),
         ),
-        vol.Optional(
-            CONF_OPTIMAL_SPECIFIC_HUMIDITY, default=DEFAULT_OPTIMAL_SPECIFIC_HUMIDITY
-        ): cv.positive_float,
+        vol.Optional(CONF_OPTIMAL_SPECIFIC_HUMIDITY): cv.positive_float,
     }
 )
 
@@ -141,11 +143,15 @@ class OptimalHumidity(Entity):
         self._sensor_type = sensor_type
         self._is_metric = hass.config.units.is_metric
 
+        psychrolib.SetUnitSystem(psychrolib.SI)
+        self._indoor_pressure = psychrolib.GetStandardAtmPressure(hass.config.elevation)
+        _LOGGER.debug(
+            "Pressure at current elevation of %s m is %s Pa",
+            hass.config.elevation,
+            self._indoor_pressure,
+        )
+
         if indoor_pressure_sensor is None:
-            psychrolib.SetUnitSystem(psychrolib.SI)
-            self._indoor_pressure = psychrolib.GetStandardAtmPressure(
-                hass.config.elevation
-            )
             self._indoor_pressure_sensor = None
             self._entities = {
                 self._indoor_temp_sensor,
@@ -154,7 +160,6 @@ class OptimalHumidity(Entity):
             }
         else:
             self._indoor_pressure_sensor = indoor_pressure_sensor
-            self._indoor_pressure = None
             self._entities = {
                 self._indoor_temp_sensor,
                 self._critical_temp_sensor,
@@ -173,7 +178,8 @@ class OptimalHumidity(Entity):
         self._mold_warning = None
         self._humidex = None
         self._humidex_comfort = None
-        self._optimal_specific_humidity = optimal_specific_humidity
+        self._optimal_specific_humidity_from_config = optimal_specific_humidity
+        self._optimal_humidity = self._optimal_specific_humidity_from_config
 
     async def async_added_to_hass(self):
         """Register callbacks."""
@@ -393,6 +399,7 @@ class OptimalHumidity(Entity):
         self._calc_dewpoint()
         # TODO: Discover critical temperature from a list of provided sensors (lowest/highest?)
         self._calc_critical_humidity()
+        self._calc_optimal_specific_humidity()
         self._calc_specific_humidity()
         self._calc_optimal_humidity()
         self._set_mold_warning()
@@ -417,6 +424,8 @@ class OptimalHumidity(Entity):
             self._state = self._humidex
         elif self._sensor_type == ATTR_HUMIDEX_COMFORT:
             self._state = self._humidex_comfort
+        elif self._sensor_type == ATTR_OPTIMAL_SPECIFIC_HUMIDITY:
+            self._state = self._optimal_specific_humidity
 
         if self._state is None:
             self._available = False
@@ -488,16 +497,22 @@ class OptimalHumidity(Entity):
         )
         self._specific_humidity = float(f"{specific_humidity:.2f}")
 
-        _LOGGER.debug("Specific humidity: %s", self._specific_humidity)
+        _LOGGER.debug(
+            "Specific humidity: %s %s",
+            self._specific_humidity,
+            GRAMS_OF_WATER_TO_GRAMS_OF_AIR,
+        )
 
     def _calc_critical_humidity(self):
         """Calculate the humidity at the critical temperature."""
         if None in (self._dewpoint, self._crit_temp):
 
             _LOGGER.debug(
-                "Invalid inputs - dewpoint: %s crit_temp: %s",
+                "Invalid inputs - dewpoint: %s %s crit_temp: %s %s",
                 self._dewpoint,
+                TEMP_CELSIUS,
                 self._crit_temp,
+                TEMP_CELSIUS,
             )
             self._crit_hum = None
             self._available = False
@@ -536,10 +551,43 @@ class OptimalHumidity(Entity):
 
         _LOGGER.debug("Risk of mold: %s", self._mold_warning)
 
+    def _calc_optimal_specific_humidity(self):
+        """Calculate the optimal specific humidity based on air pressure."""
+        if self._indoor_pressure is None:
+            self._optimal_specific_humidity = None
+            return
+
+        if not self._optimal_specific_humidity_from_config is None:
+            self._optimal_specific_humidity = (
+                self._optimal_specific_humidity_from_config
+            )
+            return
+
+        psychrolib.SetUnitSystem(psychrolib.SI)
+        optimal_specific_humidity = (
+            psychrolib.GetSpecificHumFromHumRatio(
+                psychrolib.GetHumRatioFromRelHum(
+                    IDEAL_TEMPERATURE, IDEAL_HUMIDITY, self._indoor_pressure
+                )
+            )
+            * 1000
+        )
+        self._optimal_specific_humidity = float(f"{optimal_specific_humidity:.2f}")
+        _LOGGER.debug(
+            "Optimal specific humidity set to %s%s",
+            self._optimal_specific_humidity,
+            GRAMS_OF_WATER_TO_GRAMS_OF_AIR,
+        )
+
     def _calc_optimal_humidity(self):
         """Calculate the optimal humidity for the room."""
 
-        if None in (self._indoor_temp, self._crit_temp, self._indoor_pressure):
+        if None in (
+            self._indoor_temp,
+            self._crit_temp,
+            self._indoor_pressure,
+            self._optimal_specific_humidity,
+        ):
             self._optimal_humidity = None
             return
 
@@ -599,7 +647,7 @@ class OptimalHumidity(Entity):
         else:
             self._optimal_humidity = float(f"{optimal_humidity:.1f}")
 
-        _LOGGER.debug("Optimal humidity: %s", self._optimal_humidity)
+        _LOGGER.debug("Optimal humidity: %s %s", self._optimal_humidity, PERCENTAGE)
 
     @property
     def should_poll(self):
@@ -659,6 +707,7 @@ class OptimalHumidity(Entity):
                 ATTR_MOLD_WARNING: self._mold_warning,
                 ATTR_HUMIDEX: self._humidex,
                 ATTR_HUMIDEX_COMFORT: self._humidex_comfort,
+                ATTR_OPTIMAL_SPECIFIC_HUMIDITY: self._optimal_specific_humidity,
             }
 
         dewpoint = (
@@ -681,4 +730,5 @@ class OptimalHumidity(Entity):
             ATTR_MOLD_WARNING: self._mold_warning,
             ATTR_HUMIDEX: humidex,
             ATTR_HUMIDEX_COMFORT: self._humidex_comfort,
+            ATTR_OPTIMAL_SPECIFIC_HUMIDITY: self._optimal_specific_humidity,
         }

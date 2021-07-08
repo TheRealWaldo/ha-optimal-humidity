@@ -21,14 +21,15 @@ input_number:
     name: Indoor Humidity
     min: 0
     max: 100
-    initial: 40
+    initial: 45
+    step: .5
     mode: slider
     unit_of_measurement: "%"
   indoor_temp_sensor:
     name: Indoor Temperature
     min: 0
     max: 100
-    initial: 24.5
+    initial: 21
     step: .5
     mode: slider
     unit_of_measurement: °C
@@ -44,7 +45,7 @@ input_number:
     name: Pressure Sensor
     min: 0
     max: 108480
-    initial: 89500
+    initial: 101325
     unit_of_measurement: Pa
 
 sensor:
