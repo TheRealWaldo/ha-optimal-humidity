@@ -24,6 +24,7 @@ ATTR_CRITICAL_HUMIDITY = "critical_humidity"
 ATTR_MOLD_WARNING = "mold_warning"
 ATTR_HUMIDEX = "humidex"
 ATTR_HUMIDEX_COMFORT = "humidex_comfort"
+ATTR_OPTIMAL_HUMIDEX = "optimal_humidex"
 
 CONF_CRITICAL_TEMP = "critical_temp_sensor"
 CONF_INDOOR_HUMIDITY = "indoor_humidity_sensor"
@@ -79,6 +80,12 @@ SENSOR_TYPES = {
         GRAMS_OF_WATER_TO_GRAMS_OF_AIR,
         "",
         "mdi:water",
+    ),
+    ATTR_OPTIMAL_HUMIDEX: (
+        ATTR_OPTIMAL_HUMIDEX,
+        TEMP_CELSIUS,
+        DEVICE_CLASS_TEMPERATURE,
+        "hass:thermometer",
     ),
 }
 

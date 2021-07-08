@@ -6,6 +6,7 @@ import voluptuous as vol
 import psychrolib
 
 from .const import (
+    ATTR_OPTIMAL_HUMIDEX,
     DEFAULT_NAME,
     CONF_INDOOR_TEMP,
     CONF_INDOOR_HUMIDITY,
@@ -71,6 +72,7 @@ SENSOR_SCHEMA = vol.Schema(
                     ATTR_HUMIDEX,
                     ATTR_HUMIDEX_COMFORT,
                     ATTR_OPTIMAL_SPECIFIC_HUMIDITY,
+                    ATTR_OPTIMAL_HUMIDEX,
                 )
             ),
         ),
@@ -176,7 +178,8 @@ class OptimalHumidity(Entity):
         self._crit_hum = None
         self._optimal_humidity = None
         self._mold_warning = None
-        self._humidex = None
+        self._humidex_attr = None
+        self._optimal_humidex = None
         self._humidex_comfort = None
         self._optimal_specific_humidity_from_config = optimal_specific_humidity
         self._optimal_humidity = self._optimal_specific_humidity_from_config
@@ -399,9 +402,10 @@ class OptimalHumidity(Entity):
         self._calc_dewpoint()
         # TODO: Discover critical temperature from a list of provided sensors (lowest/highest?)
         self._calc_critical_humidity()
-        self._calc_optimal_specific_humidity()
         self._calc_specific_humidity()
+        self._calc_optimal_specific_humidity()
         self._calc_optimal_humidity()
+        self._calc_optimal_humidex()
         self._set_mold_warning()
         self._calc_humidex()
         self._calc_humidex_comfort()
@@ -421,7 +425,9 @@ class OptimalHumidity(Entity):
         elif self._sensor_type == ATTR_MOLD_WARNING:
             self._state = self._mold_warning
         elif self._sensor_type == ATTR_HUMIDEX:
-            self._state = self._humidex
+            self._state = self._humidex_attr
+        elif self._sensor_type == ATTR_OPTIMAL_HUMIDEX:
+            self._state = self._optimal_humidex
         elif self._sensor_type == ATTR_HUMIDEX_COMFORT:
             self._state = self._humidex_comfort
         elif self._sensor_type == ATTR_OPTIMAL_SPECIFIC_HUMIDITY:
@@ -433,7 +439,7 @@ class OptimalHumidity(Entity):
             self._available = True
 
     def _calc_humidex_comfort(self):
-        if self._humidex is None:
+        if self._humidex_attr is None:
             self._humidex_comfort = None
             return
 
@@ -446,23 +452,27 @@ class OptimalHumidity(Entity):
             "Dangerous discomfort",
             "Heat stroke probable",
         ]
-        self._humidex_comfort = comfort_level[
-            bisect.bisect(break_points, self._humidex - 1)
+        humidex_comfort = comfort_level[
+            bisect.bisect(break_points, self._humidex_attr - 1)
         ]
+
+        self._humidex_comfort = humidex_comfort
+
+    def _humidex(self, temperature, humidity):
+        """Calculate humidex given temperature and humidity"""
+        # It equals H = T + (0.5555 * (e - 10)), where T is the temperature in Celsius and e is the vapor pressure in millibars (mb)
+        psychrolib.SetUnitSystem(psychrolib.SI)
+        vapor_pressure = psychrolib.GetVapPresFromRelHum(temperature, humidity) * 0.01
+        return self._indoor_temp + (0.5555 * (vapor_pressure - 10))
 
     def _calc_humidex(self):
         """Calculate the humidex for the indoor air."""
-        # It equals H = T + (0.5555 * (e - 10)), where T is the temperature in Celsius and e is the vapor pressure in millibars (mb)
         if None in (self._indoor_temp, self._indoor_hum):
-            self._humidex = None
+            self._humidex_attr = None
             return
 
-        psychrolib.SetUnitSystem(psychrolib.SI)
-        vapor_pressure = (
-            psychrolib.GetVapPresFromRelHum(self._indoor_temp, self._indoor_hum) * 0.01
-        )
-        humidex = self._indoor_temp + (0.5555 * (vapor_pressure - 10))
-        self._humidex = float(f"{humidex:.2f}")
+        humidex = self._humidex(self._indoor_temp, self._indoor_hum)
+        self._humidex_attr = float(f"{humidex:.2f}")
 
     def _calc_dewpoint(self):
         """Calculate the dewpoint for the indoor air."""
@@ -577,6 +587,17 @@ class OptimalHumidity(Entity):
             "Optimal specific humidity set to %s%s",
             self._optimal_specific_humidity,
             GRAMS_OF_WATER_TO_GRAMS_OF_AIR,
+        )
+
+    def _calc_optimal_humidex(self):
+        """Calculate the humidex at the optimal relative humidity."""
+        if self._optimal_specific_humidity is None:
+            self._optimal_humidex = None
+            return
+        optimal_humidex = self._humidex(self._indoor_temp, self._optimal_humidity / 100)
+        self._optimal_humidex = float(f"{optimal_humidex:.2f}")
+        _LOGGER.debug(
+            "Optimal humidex set to %s %s", self._optimal_humidex, TEMP_CELSIUS
         )
 
     def _calc_optimal_humidity(self):
@@ -707,9 +728,10 @@ class OptimalHumidity(Entity):
                 ATTR_OPTIMAL_HUMIDITY: self._optimal_humidity,
                 ATTR_CRITICAL_HUMIDITY: self._crit_hum,
                 ATTR_MOLD_WARNING: self._mold_warning,
-                ATTR_HUMIDEX: self._humidex,
+                ATTR_HUMIDEX: self._humidex_attr,
                 ATTR_HUMIDEX_COMFORT: self._humidex_comfort,
                 ATTR_OPTIMAL_SPECIFIC_HUMIDITY: self._optimal_specific_humidity,
+                ATTR_OPTIMAL_HUMIDEX: self._optimal_humidex,
             }
 
         dewpoint = (
@@ -719,8 +741,8 @@ class OptimalHumidity(Entity):
         )
 
         humidex = (
-            util.temperature.celsius_to_fahrenheit(self._humidex)
-            if self._humidex is not None
+            util.temperature.celsius_to_fahrenheit(self._humidex_attr)
+            if self._humidex_attr is not None
             else None
         )
 
@@ -733,4 +755,5 @@ class OptimalHumidity(Entity):
             ATTR_HUMIDEX: humidex,
             ATTR_HUMIDEX_COMFORT: self._humidex_comfort,
             ATTR_OPTIMAL_SPECIFIC_HUMIDITY: self._optimal_specific_humidity,
+            ATTR_OPTIMAL_HUMIDEX: self._optimal_humidex,
         }

@@ -88,6 +88,7 @@ sensor:
         indoor_temp_sensor: input_number.indoor_temp_sensor
         indoor_humidity_sensor: input_number.indoor_humidity_sensor
         critical_temp_sensor: input_number.critical_temp_sensor
+        indoor_pressure_sensor: input_number.indoor_pressure_sensor
 
       test_humidex_comfort:
         name: "Test Humidex Comfort"
@@ -95,3 +96,12 @@ sensor:
         indoor_temp_sensor: input_number.indoor_temp_sensor
         indoor_humidity_sensor: input_number.indoor_humidity_sensor
         critical_temp_sensor: input_number.critical_temp_sensor
+        indoor_pressure_sensor: input_number.indoor_pressure_sensor
+
+      test_optimal_humidex:
+        name: "Test Optimal Humidex"
+        type: optimal_humidex
+        indoor_temp_sensor: input_number.indoor_temp_sensor
+        indoor_humidity_sensor: input_number.indoor_humidity_sensor
+        critical_temp_sensor: input_number.critical_temp_sensor
+        indoor_pressure_sensor: input_number.indoor_pressure_sensor
