@@ -29,8 +29,9 @@ CONF_INDOOR_HUMIDITY = "indoor_humidity_sensor"
 CONF_INDOOR_TEMP = "indoor_temp_sensor"
 CONF_INDOOR_PRESSURE = "indoor_pressure_sensor"
 CONF_OPTIMAL_SPECIFIC_HUMIDITY = "optimal_specific_humidity"
-# 7g/m³ seems to be a comfortable default
-DEFAULT_OPTIMAL_SPECIFIC_HUMIDITY = 7
+# 7.8g_H₂O g_Air⁻¹ seems to be a comfortable default based on 45% RH
+# and 21°C being the ideal conditions for humans
+DEFAULT_OPTIMAL_SPECIFIC_HUMIDITY = 7.8
 
 DEFAULT_NAME = "Optimal Humidity"
 
