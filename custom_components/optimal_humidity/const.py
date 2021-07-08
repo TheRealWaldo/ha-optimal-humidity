@@ -19,6 +19,7 @@ ISSUE_URL = "https://github.com/TheRealWaldo/ha-optimal-humidity/issues"
 ATTR_DEWPOINT = "dewpoint"
 ATTR_SPECIFIC_HUMIDITY = "specific_humidity"
 ATTR_OPTIMAL_HUMIDITY = "optimal_humidity"
+ATTR_OPTIMAL_SPECIFIC_HUMIDITY = "optimal_specific_humidity"
 ATTR_CRITICAL_HUMIDITY = "critical_humidity"
 ATTR_MOLD_WARNING = "mold_warning"
 ATTR_HUMIDEX = "humidex"
@@ -29,12 +30,13 @@ CONF_INDOOR_HUMIDITY = "indoor_humidity_sensor"
 CONF_INDOOR_TEMP = "indoor_temp_sensor"
 CONF_INDOOR_PRESSURE = "indoor_pressure_sensor"
 CONF_OPTIMAL_SPECIFIC_HUMIDITY = "optimal_specific_humidity"
-# 7.8g_H₂O g_Air⁻¹ seems to be a comfortable default based on 45% RH
-# and 21°C being the ideal conditions for humans
-DEFAULT_OPTIMAL_SPECIFIC_HUMIDITY = 7.8
+
+IDEAL_HUMIDITY = 0.45
+IDEAL_TEMPERATURE = 21
 
 DEFAULT_NAME = "Optimal Humidity"
 
+GRAMS_OF_WATER_TO_GRAMS_OF_AIR = "g_H₂O g_Air⁻¹"
 SENSOR_TYPES = {
     ATTR_DEWPOINT: (
         ATTR_DEWPOINT,
@@ -44,7 +46,7 @@ SENSOR_TYPES = {
     ),
     ATTR_SPECIFIC_HUMIDITY: (
         ATTR_SPECIFIC_HUMIDITY,
-        "g_H₂O g_Air⁻¹",
+        GRAMS_OF_WATER_TO_GRAMS_OF_AIR,
         "",
         "mdi:water",
     ),
@@ -71,6 +73,12 @@ SENSOR_TYPES = {
         None,
         None,
         "hass:account",
+    ),
+    ATTR_OPTIMAL_SPECIFIC_HUMIDITY: (
+        ATTR_OPTIMAL_SPECIFIC_HUMIDITY,
+        GRAMS_OF_WATER_TO_GRAMS_OF_AIR,
+        "",
+        "mdi:water",
     ),
 }
 

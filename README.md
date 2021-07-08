@@ -65,13 +65,13 @@ sensor:
 
 |Parameter |Required|Description
 |:---|---|---
-| `name` | No | Friendly name **Default**: Optimal Humidity
-| `type` | No | The type of sensor to use for the primary state.  One of `optimal_humidity`, `specific_humidity`, `dewpoint`, `critical_humidity`, `mold_warning`, `humidex`, or `humidex_comfort` **Default**: `optimal_humidity`
 | `indoor_temp_sensor` | Yes | Temperature sensor to use for calculations. Typically the warmest sensor in the room.
-| `critical_temp_sensor` | Yes | Temperature sensor to use for calculations to avoid mold and condensation. Typically the coldest sensor in the room.
-| `indoor_pressure_sensor` | No | Pressue sensor to use for calculations.  If not included, will use the elevation set in Home Assistant to calculate the Standard Air Pressure.
 | `indoor_humidity_sensor` | Yes | Humidity sensor to use for calculations. Typically in the same location as the `indoor_temp_sensor`.
-| `optimal_specific_humidity` | No | Optimal specific humidity in grams of H₂O per gram of Air⁻¹ **Default**: 7
+| `critical_temp_sensor` | Yes | Temperature sensor to use for calculations to avoid mold and condensation. Typically the coldest sensor in the room.
+| `name` | No | Friendly name **Default**: Optimal Humidity
+| `type` | No | The type of sensor to use for the primary state.  Value can be any of the attributes listed below. **Default**: `optimal_humidity`
+| `indoor_pressure_sensor` | No | Pressue sensor to use for calculations.  If not included, will use the elevation set in Home Assistant to calculate the Standard Air Pressure.
+| `optimal_specific_humidity` | No | Overrides the optimal specific humidity calculation.  In grams of H₂O per gram of Air⁻¹ **Default**: Calculated based on `indoor_pressure_sensor` if available, or from Home Assistants elevation setting if not.
 
 ### Attributes
 
@@ -79,6 +79,7 @@ sensor:
 |:---|---|---
 | `dewpoint` | °C/°F | Dewpoint from the `indoor_temp_sensor` and `indoor_humidity_sensor` and `indoor_pressure_sensor` combined.
 | `optimal_humidity` | % | The optimal set point in relative humidity for a humidifier or dehumidifier.
+| `optimal_specific_humidity` | grams of H₂O per gram of Air⁻¹ | Calculated based on `indoor_pressure_sensor` or Home Assitants elevation setting.  Can be overriden by using the `optimal_specific_humidity` option.
 | `specific_humidity` | grams of H₂O per gram of Air⁻¹ | Specific humidity from the `indoor_temp_sensor` and `indoor_humidity_sensor` and `indoor_pressure_sensor` combined.
 | `critical_humidity` | % | Calculated critical humidity at the coldest point in the room, using the `critical_temp_sensor`.
 | `mold_warningr` | boolean | Whether or not there is a risk of mold at either the critical point or the indoor sensor location.
