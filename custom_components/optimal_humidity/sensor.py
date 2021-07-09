@@ -591,7 +591,7 @@ class OptimalHumidity(Entity):
 
     def _calc_optimal_humidex(self):
         """Calculate the humidex at the optimal relative humidity."""
-        if self._optimal_specific_humidity is None:
+        if None in (self._optimal_specific_humidity, self._indoor_temp):
             self._optimal_humidex = None
             return
         optimal_humidex = self._humidex(self._indoor_temp, self._optimal_humidity / 100)
