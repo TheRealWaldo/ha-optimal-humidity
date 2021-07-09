@@ -3,7 +3,7 @@
   "name": "Optimal Humidity",
   "documentation": "https://github.com/TheRealWaldo/ha-optimal-humidity",
   "issue_tracker": "https://github.com/TheRealWaldo/ha-optimal-humidity/issues",
-  "version": "1.3.3",
+  "version": "2.0.0",
   "codeowners": [
     "@TheRealWaldo"
   ],
