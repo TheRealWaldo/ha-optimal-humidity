@@ -71,17 +71,17 @@ sensor:
 | `name` | No | Friendly name **Default**: Optimal Humidity
 | `type` | No | The type of sensor to use for the primary state.  Value can be any of the attributes listed below. **Default**: `optimal_humidity`
 | `indoor_pressure_sensor` | No | Pressue sensor to use for calculations.  If not included, will use the elevation set in Home Assistant to calculate the Standard Air Pressure.
-| `optimal_specific_humidity` | No | Overrides the optimal specific humidity calculation.  In grams of H₂O per gram of Air⁻¹ **Default**: Calculated based on `indoor_pressure_sensor` if available, or from Home Assistants elevation setting if not.
+| `comfortable_specific_humidity` | No | Overrides the comfortable specific humidity calculation.  In grams of H₂O per gram of Air⁻¹ **Default**: Calculated based on `indoor_pressure_sensor` if available, or from Home Assistants elevation setting if not.
 
 ### Attributes
 
 |Attribute|Unit|Description
 |:---|---|---
 | `dewpoint` | °C/°F | Dewpoint from the `indoor_temp_sensor` and `indoor_humidity_sensor` and `indoor_pressure_sensor` combined.
-| `optimal_humidity` | % | The optimal set point in relative humidity for a humidifier or dehumidifier.
-| `optimal_specific_humidity` | grams of H₂O per gram of Air⁻¹ | Calculated based on `indoor_pressure_sensor` or Home Assitants elevation setting.  Can be overriden by using the `optimal_specific_humidity` option.
+| `optimal_humidity` | %RH | The optimal set point in relative humidity for a humidifier or dehumidifier.
+| `comfortable_specific_humidity` | grams of H₂O per gram of Air⁻¹ | Calculated based on `indoor_pressure_sensor` or Home Assitants elevation setting, 21°C and 45%RH.  Can be overriden by using the `comfortable_specific_humidity` option.
 | `specific_humidity` | grams of H₂O per gram of Air⁻¹ | Specific humidity from the `indoor_temp_sensor` and `indoor_humidity_sensor` and `indoor_pressure_sensor` combined.
-| `critical_humidity` | % | Calculated critical humidity at the coldest point in the room, using the `critical_temp_sensor`.
+| `critical_humidity` | %RH | Calculated critical humidity at the coldest point in the room, using the `critical_temp_sensor`.
 | `mold_warningr` | boolean | Whether or not there is a risk of mold at either the critical point or the indoor sensor location.
 | `humidex` | °C/°F | Humidex usin the Canadian standard.
 | `humidex_comfort` | text | An english statement describing the current human comfort level base on the `humidex`.

@@ -23,8 +23,8 @@ from .const import (
     ATTR_MOLD_WARNING,
     ATTR_HUMIDEX,
     ATTR_HUMIDEX_COMFORT,
-    CONF_OPTIMAL_SPECIFIC_HUMIDITY,
-    ATTR_OPTIMAL_SPECIFIC_HUMIDITY,
+    CONF_COMFORTABLE_SPECIFIC_HUMIDITY,
+    ATTR_COMFORTABLE_SPECIFIC_HUMIDITY,
 )
 from homeassistant import util
 from homeassistant.components.sensor import (
@@ -71,12 +71,12 @@ SENSOR_SCHEMA = vol.Schema(
                     ATTR_MOLD_WARNING,
                     ATTR_HUMIDEX,
                     ATTR_HUMIDEX_COMFORT,
-                    ATTR_OPTIMAL_SPECIFIC_HUMIDITY,
+                    ATTR_COMFORTABLE_SPECIFIC_HUMIDITY,
                     ATTR_OPTIMAL_HUMIDEX,
                 )
             ),
         ),
-        vol.Optional(CONF_OPTIMAL_SPECIFIC_HUMIDITY): cv.positive_float,
+        vol.Optional(CONF_COMFORTABLE_SPECIFIC_HUMIDITY): cv.positive_float,
     }
 )
 
@@ -97,7 +97,9 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
         indoor_humidity_sensor = device_config.get(CONF_INDOOR_HUMIDITY)
         indoor_pressure_sensor = device_config.get(CONF_INDOOR_PRESSURE)
         sensor_type = device_config.get(CONF_TYPE)
-        optimal_specific_humidity = device_config.get(CONF_OPTIMAL_SPECIFIC_HUMIDITY)
+        comfortable_specific_humidity = device_config.get(
+            CONF_COMFORTABLE_SPECIFIC_HUMIDITY
+        )
 
         async_add_entities(
             [
@@ -110,7 +112,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
                     indoor_humidity_sensor,
                     indoor_pressure_sensor,
                     sensor_type,
-                    optimal_specific_humidity,
+                    comfortable_specific_humidity,
                 )
             ],
             False,
@@ -130,7 +132,7 @@ class OptimalHumidity(Entity):
         indoor_humidity_sensor,
         indoor_pressure_sensor,
         sensor_type,
-        optimal_specific_humidity,
+        comfortable_specific_humidity,
     ):
         """Initialize the sensor."""
         self.hass = hass
@@ -181,8 +183,10 @@ class OptimalHumidity(Entity):
         self._humidex_attr = None
         self._optimal_humidex = None
         self._humidex_comfort = None
-        self._optimal_specific_humidity_from_config = optimal_specific_humidity
-        self._optimal_humidity = self._optimal_specific_humidity_from_config
+        self._comfortable_specific_humidity_from_config = comfortable_specific_humidity
+        self._comfortable_specific_humidity = (
+            self._comfortable_specific_humidity_from_config
+        )
 
     async def async_added_to_hass(self):
         """Register callbacks."""
@@ -403,7 +407,7 @@ class OptimalHumidity(Entity):
         # TODO: Discover critical temperature from a list of provided sensors (lowest/highest?)
         self._calc_critical_humidity()
         self._calc_specific_humidity()
-        self._calc_optimal_specific_humidity()
+        self._calc_comfortable_specific_humidity()
         self._calc_optimal_humidity()
         self._calc_optimal_humidex()
         self._set_mold_warning()
@@ -430,8 +434,8 @@ class OptimalHumidity(Entity):
             self._state = self._optimal_humidex
         elif self._sensor_type == ATTR_HUMIDEX_COMFORT:
             self._state = self._humidex_comfort
-        elif self._sensor_type == ATTR_OPTIMAL_SPECIFIC_HUMIDITY:
-            self._state = self._optimal_specific_humidity
+        elif self._sensor_type == ATTR_COMFORTABLE_SPECIFIC_HUMIDITY:
+            self._state = self._comfortable_specific_humidity
 
         if self._state is None:
             self._available = False
@@ -561,20 +565,21 @@ class OptimalHumidity(Entity):
 
         _LOGGER.debug("Risk of mold: %s", self._mold_warning)
 
-    def _calc_optimal_specific_humidity(self):
-        """Calculate the optimal specific humidity based on air pressure."""
+    def _calc_comfortable_specific_humidity(self):
+        """Calculate the comfortable specific humidity based on air pressure."""
+
         if self._indoor_pressure is None:
-            self._optimal_specific_humidity = None
+            self._comfortable_specific_humidity = None
             return
 
-        if not self._optimal_specific_humidity_from_config is None:
-            self._optimal_specific_humidity = (
-                self._optimal_specific_humidity_from_config
+        if not self._comfortable_specific_humidity_from_config is None:
+            self._comfortable_specific_humidity = (
+                self._comfortable_specific_humidity_from_config
             )
             return
 
         psychrolib.SetUnitSystem(psychrolib.SI)
-        optimal_specific_humidity = (
+        comfortable_specific_humidity = (
             psychrolib.GetSpecificHumFromHumRatio(
                 psychrolib.GetHumRatioFromRelHum(
                     IDEAL_TEMPERATURE, IDEAL_HUMIDITY, self._indoor_pressure
@@ -582,10 +587,12 @@ class OptimalHumidity(Entity):
             )
             * 1000
         )
-        self._optimal_specific_humidity = float(f"{optimal_specific_humidity:.2f}")
+        self._comfortable_specific_humidity = float(
+            f"{comfortable_specific_humidity:.2f}"
+        )
         _LOGGER.debug(
             "Optimal specific humidity set to %s%s",
-            self._optimal_specific_humidity,
+            self._comfortable_specific_humidity,
             GRAMS_OF_WATER_TO_GRAMS_OF_AIR,
         )
 
@@ -607,7 +614,7 @@ class OptimalHumidity(Entity):
             self._indoor_temp,
             self._crit_temp,
             self._indoor_pressure,
-            self._optimal_specific_humidity,
+            self._comfortable_specific_humidity,
         ):
             self._optimal_humidity = None
             return
@@ -617,7 +624,7 @@ class OptimalHumidity(Entity):
         comfortable_humidity = psychrolib.GetRelHumFromHumRatio(
             self._indoor_temp,
             psychrolib.GetHumRatioFromSpecificHum(
-                self._optimal_specific_humidity / 1000
+                self._comfortable_specific_humidity / 1000
             ),
             self._indoor_pressure,
         )
@@ -740,7 +747,7 @@ class OptimalHumidity(Entity):
                 ATTR_MOLD_WARNING: self._mold_warning,
                 ATTR_HUMIDEX: self._humidex_attr,
                 ATTR_HUMIDEX_COMFORT: self._humidex_comfort,
-                ATTR_OPTIMAL_SPECIFIC_HUMIDITY: self._optimal_specific_humidity,
+                ATTR_COMFORTABLE_SPECIFIC_HUMIDITY: self._comfortable_specific_humidity,
                 ATTR_OPTIMAL_HUMIDEX: self._optimal_humidex,
             }
 
@@ -764,6 +771,6 @@ class OptimalHumidity(Entity):
             ATTR_MOLD_WARNING: self._mold_warning,
             ATTR_HUMIDEX: humidex,
             ATTR_HUMIDEX_COMFORT: self._humidex_comfort,
-            ATTR_OPTIMAL_SPECIFIC_HUMIDITY: self._optimal_specific_humidity,
+            ATTR_COMFORTABLE_SPECIFIC_HUMIDITY: self._comfortable_specific_humidity,
             ATTR_OPTIMAL_HUMIDEX: self._optimal_humidex,
         }

@@ -65,7 +65,7 @@ sensor:
         indoor_humidity_sensor: input_number.indoor_humidity_sensor
         critical_temp_sensor: input_number.critical_temp_sensor
         indoor_pressure_sensor: input_number.indoor_pressure_sensor
-        optimal_specific_humidity: 7.5
+        comfortable_specific_humidity: 7.5
 
       test_specific_humidity:
         name: "Test Specific Humidity"
