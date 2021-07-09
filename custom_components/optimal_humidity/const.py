@@ -19,7 +19,7 @@ ISSUE_URL = "https://github.com/TheRealWaldo/ha-optimal-humidity/issues"
 ATTR_DEWPOINT = "dewpoint"
 ATTR_SPECIFIC_HUMIDITY = "specific_humidity"
 ATTR_OPTIMAL_HUMIDITY = "optimal_humidity"
-ATTR_OPTIMAL_SPECIFIC_HUMIDITY = "optimal_specific_humidity"
+ATTR_COMFORTABLE_SPECIFIC_HUMIDITY = "comfortable_specific_humidity"
 ATTR_CRITICAL_HUMIDITY = "critical_humidity"
 ATTR_MOLD_WARNING = "mold_warning"
 ATTR_HUMIDEX = "humidex"
@@ -30,7 +30,7 @@ CONF_CRITICAL_TEMP = "critical_temp_sensor"
 CONF_INDOOR_HUMIDITY = "indoor_humidity_sensor"
 CONF_INDOOR_TEMP = "indoor_temp_sensor"
 CONF_INDOOR_PRESSURE = "indoor_pressure_sensor"
-CONF_OPTIMAL_SPECIFIC_HUMIDITY = "optimal_specific_humidity"
+CONF_COMFORTABLE_SPECIFIC_HUMIDITY = "comfortable_specific_humidity"
 
 IDEAL_HUMIDITY = 0.45
 IDEAL_TEMPERATURE = 21
@@ -75,8 +75,8 @@ SENSOR_TYPES = {
         None,
         "hass:account",
     ),
-    ATTR_OPTIMAL_SPECIFIC_HUMIDITY: (
-        ATTR_OPTIMAL_SPECIFIC_HUMIDITY,
+    ATTR_COMFORTABLE_SPECIFIC_HUMIDITY: (
+        ATTR_COMFORTABLE_SPECIFIC_HUMIDITY,
         GRAMS_OF_WATER_TO_GRAMS_OF_AIR,
         "",
         "mdi:water",
