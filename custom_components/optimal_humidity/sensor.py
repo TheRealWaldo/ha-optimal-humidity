@@ -568,14 +568,14 @@ class OptimalHumidity(Entity):
     def _calc_comfortable_specific_humidity(self):
         """Calculate the comfortable specific humidity based on air pressure."""
 
-        if self._indoor_pressure is None:
-            self._comfortable_specific_humidity = None
-            return
-
         if not self._comfortable_specific_humidity_from_config is None:
             self._comfortable_specific_humidity = (
                 self._comfortable_specific_humidity_from_config
             )
+            return
+
+        if self._indoor_pressure is None:
+            self._comfortable_specific_humidity = None
             return
 
         psychrolib.SetUnitSystem(psychrolib.SI)
