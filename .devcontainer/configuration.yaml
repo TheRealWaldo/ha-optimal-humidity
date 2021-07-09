@@ -105,3 +105,11 @@ sensor:
         indoor_humidity_sensor: input_number.indoor_humidity_sensor
         critical_temp_sensor: input_number.critical_temp_sensor
         indoor_pressure_sensor: input_number.indoor_pressure_sensor
+
+      test_comfortable_humidity:
+        name: "Test Comfortable Humidity"
+        type: comfortable_humidity
+        indoor_temp_sensor: input_number.indoor_temp_sensor
+        indoor_humidity_sensor: input_number.indoor_humidity_sensor
+        critical_temp_sensor: input_number.critical_temp_sensor
+        indoor_pressure_sensor: input_number.indoor_pressure_sensor

@@ -6,6 +6,7 @@ import voluptuous as vol
 import psychrolib
 
 from .const import (
+    ATTR_COMFORTABLE_HUMIDITY,
     ATTR_OPTIMAL_HUMIDEX,
     DEFAULT_NAME,
     CONF_INDOOR_TEMP,
@@ -73,6 +74,7 @@ SENSOR_SCHEMA = vol.Schema(
                     ATTR_HUMIDEX_COMFORT,
                     ATTR_COMFORTABLE_SPECIFIC_HUMIDITY,
                     ATTR_OPTIMAL_HUMIDEX,
+                    ATTR_COMFORTABLE_HUMIDITY,
                 )
             ),
         ),
@@ -187,6 +189,7 @@ class OptimalHumidity(Entity):
         self._comfortable_specific_humidity = (
             self._comfortable_specific_humidity_from_config
         )
+        self._comfortable_humidity = None
 
     async def async_added_to_hass(self):
         """Register callbacks."""
@@ -408,6 +411,7 @@ class OptimalHumidity(Entity):
         self._calc_critical_humidity()
         self._calc_specific_humidity()
         self._calc_comfortable_specific_humidity()
+        self._calc_comfortable_humidity()
         self._calc_optimal_humidity()
         self._calc_optimal_humidex()
         self._set_mold_warning()
@@ -436,6 +440,8 @@ class OptimalHumidity(Entity):
             self._state = self._humidex_comfort
         elif self._sensor_type == ATTR_COMFORTABLE_SPECIFIC_HUMIDITY:
             self._state = self._comfortable_specific_humidity
+        elif self._sensor_type == ATTR_COMFORTABLE_HUMIDITY:
+            self._state = self._comfortable_humidity
 
         if self._state is None:
             self._available = False
@@ -607,12 +613,10 @@ class OptimalHumidity(Entity):
             "Optimal humidex set to %s %s", self._optimal_humidex, TEMP_CELSIUS
         )
 
-    def _calc_optimal_humidity(self):
-        """Calculate the optimal humidity for the room."""
-
+    def _calc_comfortable_humidity(self):
+        """Calculate the comfortable humidity for the room."""
         if None in (
             self._indoor_temp,
-            self._crit_temp,
             self._indoor_pressure,
             self._comfortable_specific_humidity,
         ):
@@ -621,26 +625,44 @@ class OptimalHumidity(Entity):
 
         psychrolib.SetUnitSystem(psychrolib.SI)
 
-        comfortable_humidity = psychrolib.GetRelHumFromHumRatio(
-            self._indoor_temp,
-            psychrolib.GetHumRatioFromSpecificHum(
-                self._comfortable_specific_humidity / 1000
-            ),
-            self._indoor_pressure,
+        comfortable_humidity = (
+            psychrolib.GetRelHumFromHumRatio(
+                self._indoor_temp,
+                psychrolib.GetHumRatioFromSpecificHum(
+                    self._comfortable_specific_humidity / 1000
+                ),
+                self._indoor_pressure,
+            )
+            * 100
         )
         _LOGGER.debug("Comfortable relative humidity is: %s", comfortable_humidity)
-        if comfortable_humidity > 1:
+        if comfortable_humidity > 100:
             _LOGGER.warn(
                 "Not possible to reach a comfortable humidity at %s%s, will feel dry.",
                 self._indoor_temp,
                 TEMP_CELSIUS,
             )
-            comfortable_humidity = 1
+            comfortable_humidity = 100
 
-        _LOGGER.debug("Comfortable humidity is %s", comfortable_humidity)
+        self._comfortable_humidity = float(f"{comfortable_humidity:.2f}")
+        _LOGGER.debug("Comfortable humidity is %s", self._comfortable_humidity)
+
+    def _calc_optimal_humidity(self):
+        """Calculate the optimal humidity for the room."""
+
+        if None in (
+            self._indoor_temp,
+            self._crit_temp,
+            self._comfortable_specific_humidity,
+            self._comfortable_humidity,
+        ):
+            self._optimal_humidity = None
+            return
+
+        psychrolib.SetUnitSystem(psychrolib.SI)
 
         comfortable_dew_point = psychrolib.GetTDewPointFromRelHum(
-            self._indoor_temp, comfortable_humidity
+            self._indoor_temp, self._comfortable_humidity / 100
         )
 
         _LOGGER.debug("Comfortable dewpoint is %s", comfortable_dew_point)
@@ -678,7 +700,7 @@ class OptimalHumidity(Entity):
                     * 100
                 )
         else:
-            optimal_humidity = comfortable_humidity * 100
+            optimal_humidity = self._comfortable_humidity
 
         if optimal_humidity > 60:
             self._optimal_humidity = 60
@@ -749,6 +771,7 @@ class OptimalHumidity(Entity):
                 ATTR_HUMIDEX_COMFORT: self._humidex_comfort,
                 ATTR_COMFORTABLE_SPECIFIC_HUMIDITY: self._comfortable_specific_humidity,
                 ATTR_OPTIMAL_HUMIDEX: self._optimal_humidex,
+                ATTR_COMFORTABLE_HUMIDITY: self._comfortable_humidity,
             }
 
         dewpoint = (
@@ -773,4 +796,5 @@ class OptimalHumidity(Entity):
             ATTR_HUMIDEX_COMFORT: self._humidex_comfort,
             ATTR_COMFORTABLE_SPECIFIC_HUMIDITY: self._comfortable_specific_humidity,
             ATTR_OPTIMAL_HUMIDEX: self._optimal_humidex,
+            ATTR_COMFORTABLE_HUMIDITY: self._comfortable_humidity,
         }
