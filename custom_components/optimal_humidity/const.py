@@ -38,7 +38,7 @@ IDEAL_TEMPERATURE = 21
 
 DEFAULT_NAME = "Optimal Humidity"
 
-GRAMS_OF_WATER_TO_GRAMS_OF_AIR = "g_H₂O g_Air⁻¹"
+MILLIGRAMS_OF_WATER_TO_GRAMS_OF_AIR = "mg_H₂O g_Air⁻¹"
 SENSOR_TYPES = {
     ATTR_DEWPOINT: (
         ATTR_DEWPOINT,
@@ -48,7 +48,7 @@ SENSOR_TYPES = {
     ),
     ATTR_SPECIFIC_HUMIDITY: (
         ATTR_SPECIFIC_HUMIDITY,
-        GRAMS_OF_WATER_TO_GRAMS_OF_AIR,
+        MILLIGRAMS_OF_WATER_TO_GRAMS_OF_AIR,
         "",
         "mdi:water",
     ),
@@ -78,7 +78,7 @@ SENSOR_TYPES = {
     ),
     ATTR_COMFORTABLE_SPECIFIC_HUMIDITY: (
         ATTR_COMFORTABLE_SPECIFIC_HUMIDITY,
-        GRAMS_OF_WATER_TO_GRAMS_OF_AIR,
+        MILLIGRAMS_OF_WATER_TO_GRAMS_OF_AIR,
         "",
         "mdi:water",
     ),

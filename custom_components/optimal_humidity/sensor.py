@@ -13,7 +13,7 @@ from .const import (
     CONF_INDOOR_HUMIDITY,
     CONF_CRITICAL_TEMP,
     CONF_INDOOR_PRESSURE,
-    GRAMS_OF_WATER_TO_GRAMS_OF_AIR,
+    MILLIGRAMS_OF_WATER_TO_GRAMS_OF_AIR,
     IDEAL_HUMIDITY,
     IDEAL_TEMPERATURE,
     SENSOR_TYPES,
@@ -520,7 +520,7 @@ class OptimalHumidity(Entity):
         _LOGGER.debug(
             "Specific humidity: %s %s",
             self._specific_humidity,
-            GRAMS_OF_WATER_TO_GRAMS_OF_AIR,
+            MILLIGRAMS_OF_WATER_TO_GRAMS_OF_AIR,
         )
 
     def _calc_critical_humidity(self):
@@ -599,7 +599,7 @@ class OptimalHumidity(Entity):
         _LOGGER.debug(
             "Optimal specific humidity set to %s%s",
             self._comfortable_specific_humidity,
-            GRAMS_OF_WATER_TO_GRAMS_OF_AIR,
+            MILLIGRAMS_OF_WATER_TO_GRAMS_OF_AIR,
         )
 
     def _calc_optimal_humidex(self):
