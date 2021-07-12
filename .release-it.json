@@ -5,13 +5,13 @@
     "tagName": "${version}",
     "tagAnnotation": "Release ${version}",
     "commit": true,
-    "commitMessage": "chore(release): ${version}",
+    "commitMessage": "chore(release): ${version}\n${changelog}",
     "push": true
   },
   "github": {
     "release": true,
     "releaseName": "Release ${version}",
-    "draft": true
+    "draft": false
   },
   "hooks": {
     "after:release": "echo Successfully bumped release to ${version} for ${repo.repository}."
@@ -19,7 +19,7 @@
   "npm": false,
   "plugins": {
     "@release-it/bumper": {
-      "out": [ "README.md", "custom_components/optimal_humidity/manifest.json", "custom_components/optimal_humidity/const.py" ]
+      "out": [ "README.md", "custom_components/optimal_humidity/manifest.json", "custom_components/optimal_humidity/const.py", "VERSION" ]
     },
     "@release-it/conventional-changelog": {
       "preset": {
