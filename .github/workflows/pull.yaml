@@ -14,7 +14,7 @@ jobs:
         uses: hacs/action@main
         with:
           category: integration
-          ignore: brands wheels hacs
+          ignore: brands wheels
 
       - name: Hassfest validation
         uses: home-assistant/actions/hassfest@master
