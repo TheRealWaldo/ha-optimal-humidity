@@ -10,8 +10,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Faster HACS validation
+        if: "github.base_ref != 'refs/heads/release'"
+        uses: TheRealWaldo/faster-hacs-action@v0.0.1
+        with:
+          category: integration
+          ignore: brands wheels
+
       - name: HACS validation
-        uses: hacs/action@main
+        if: "github.ref == 'refs/heads/main' && github.base_ref == 'refs/heads/release'"
+        uses: hacs/action@21.2.2
         with:
           category: integration
           ignore: brands wheels
