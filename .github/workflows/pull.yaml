@@ -12,7 +12,7 @@ jobs:
 
       - name: Faster HACS validation
         if: "github.ref != 'refs/heads/release'"
-        uses: TheRealWaldo/faster-hacs-action@v0.0.3
+        uses: TheRealWaldo/faster-hacs-action@v0.0.4
         with:
           category: integration
           ignore: brands wheels
