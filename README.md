@@ -38,8 +38,7 @@ This sensor integration attempts to determine the optimal relative humidity set 
 
 ### MANUAL INSTALLATION
 
-1. Download the zip file from
-   [latest release](https://github.com/TheRealWaldo/ha-optimal-humidity/releases/latest).
+1. Download the zip file from [latest release](https://github.com/TheRealWaldo/ha-optimal-humidity/releases/latest).
 2. Unpack the release and copy the `custom_components/optimal_humidity` directory into the `custom_components` directory of your Home Assistant installation.
 3. Configure the `optimal_humidity` sensor.
 4. Restart Home Assistant.
@@ -79,14 +78,14 @@ sensor:
 |:---|---|---
 | `dewpoint` | °C/°F | Dewpoint from the `indoor_temp_sensor` and `indoor_humidity_sensor` and `indoor_pressure_sensor` combined.
 | `optimal_humidity` | %RH | The optimal set point in relative humidity for a humidifier or dehumidifier.
-| `comfortable_specific_humidity` | milligrams of H₂O per gram of Air⁻¹ | Calculated based on `indoor_pressure_sensor` or Home Assitants elevation setting, 21°C and 45%RH.  Can be overriden by using the `comfortable_specific_humidity` option.
+| `comfortable_specific_humidity` | milligrams of H₂O per gram of Air⁻¹ | Calculated based on `indoor_pressure_sensor` or Home Assistants elevation setting, 21°C and 45%RH.  Can be overridden by using the `comfortable_specific_humidity` option.
 | `specific_humidity` | milligrams of H₂O per gram of Air⁻¹ | Specific humidity from the `indoor_temp_sensor` and `indoor_humidity_sensor` and `indoor_pressure_sensor` combined.
 | `critical_humidity` | %RH | Calculated critical humidity at the coldest point in the room, using the `critical_temp_sensor`.
 | `mold_warningr` | boolean | Whether or not there is a risk of mold at either the critical point or the indoor sensor location.
-| `humidex` | °C/°F | Humidex usin the Canadian standard.
+| `humidex` | °C/°F | Humidex using the Canadian standard.
 | `humidex_comfort` | text | An english statement describing the current human comfort level base on the `humidex`.
 | `optimal_humidex` | °C/°F | Humidex at the `optimal_humidity` with the current temperature from `indoor_temp_sensor`.
-| `comfortable_humidity` | %RH | Comfortable humidity, not taking into account the `criticial_temp_sensor`.
+| `comfortable_humidity` | %RH | Comfortable humidity, not taking into account the `critical_temp_sensor`.
 
 ## Contributions are welcome!
 
