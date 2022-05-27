@@ -1,7 +1,6 @@
 {
   "name": "Optimal Humidity",
   "country": "CA",
-  "domains": ["sensor"],
-  "render_readme": true,
-  "iot_class": ["Assumed State", "Local Push"]
+  "homeassistant": "2021.4",
+  "render_readme": true
 }
