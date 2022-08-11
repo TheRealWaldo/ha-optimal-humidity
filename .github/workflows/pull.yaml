@@ -19,7 +19,6 @@ jobs:
         with:
           category: integration
           ignore: brands wheels
-          github-token: ${{ secrets.AUTO_PAT }}
 
       - name: HACS validation
         if: "github.ref == 'main' || (github.base_ref == 'main' && github.head_ref == 'release')"
