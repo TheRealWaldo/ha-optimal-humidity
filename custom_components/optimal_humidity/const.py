@@ -1,9 +1,6 @@
 """Constants for optimal_humidity."""
 
-from homeassistant.components.sensor import (
-    DEVICE_CLASS_HUMIDITY,
-    DEVICE_CLASS_TEMPERATURE,
-)
+from homeassistant.components.sensor import SensorDeviceClass
 
 from homeassistant.const import (
     PERCENTAGE,
@@ -43,7 +40,7 @@ SENSOR_TYPES = {
     ATTR_DEWPOINT: (
         ATTR_DEWPOINT,
         TEMP_CELSIUS,
-        DEVICE_CLASS_TEMPERATURE,
+        SensorDeviceClass.TEMPERATURE,
         "hass:thermometer",
     ),
     ATTR_SPECIFIC_HUMIDITY: (
@@ -55,19 +52,19 @@ SENSOR_TYPES = {
     ATTR_OPTIMAL_HUMIDITY: (
         ATTR_OPTIMAL_HUMIDITY,
         PERCENTAGE,
-        DEVICE_CLASS_HUMIDITY,
+        SensorDeviceClass.HUMIDITY,
         "mdi:water-percent",
     ),
     ATTR_CRITICAL_HUMIDITY: (
         ATTR_CRITICAL_HUMIDITY,
         PERCENTAGE,
-        DEVICE_CLASS_HUMIDITY,
+        SensorDeviceClass.HUMIDITY,
         "mdi:water-percent",
     ),
     ATTR_HUMIDEX: (
         ATTR_HUMIDEX,
         TEMP_CELSIUS,
-        DEVICE_CLASS_TEMPERATURE,
+        SensorDeviceClass.TEMPERATURE,
         "hass:thermometer",
     ),
     ATTR_HUMIDEX_COMFORT: (
@@ -85,13 +82,13 @@ SENSOR_TYPES = {
     ATTR_OPTIMAL_HUMIDEX: (
         ATTR_OPTIMAL_HUMIDEX,
         TEMP_CELSIUS,
-        DEVICE_CLASS_TEMPERATURE,
+        SensorDeviceClass.TEMPERATURE,
         "hass:thermometer",
     ),
     ATTR_COMFORTABLE_HUMIDITY: (
         ATTR_COMFORTABLE_HUMIDITY,
         PERCENTAGE,
-        DEVICE_CLASS_HUMIDITY,
+        SensorDeviceClass.HUMIDITY,
         "mdi:water-percent",
     ),
 }
