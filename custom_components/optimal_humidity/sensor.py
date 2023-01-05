@@ -27,12 +27,15 @@ from .const import (
     CONF_COMFORTABLE_SPECIFIC_HUMIDITY,
     ATTR_COMFORTABLE_SPECIFIC_HUMIDITY,
 )
+
 from homeassistant import util
+
+from homeassistant.util.unit_system import METRIC_SYSTEM
+
 from homeassistant.components.sensor import (
     ENTITY_ID_FORMAT,
     PLATFORM_SCHEMA,
 )
-
 from homeassistant.components.sensor import SensorDeviceClass
 
 from homeassistant.const import (
@@ -47,6 +50,7 @@ from homeassistant.const import (
     STATE_UNKNOWN,
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
+    METRIC_SYSTEM,
 )
 from homeassistant.core import callback
 import homeassistant.helpers.config_validation as cv
@@ -148,7 +152,10 @@ class OptimalHumidity(Entity):
         self._indoor_humidity_sensor = indoor_humidity_sensor
         self._critical_temp_sensor = critical_temp_sensor
         self._sensor_type = sensor_type
-        self._is_metric = hass.config.units.is_metric
+        if hass.config.units is METRIC_SYSTEM:
+            self._is_metric = True
+        else:
+            self._is_metric = False
 
         psychrolib.SetUnitSystem(psychrolib.SI)
         self._indoor_pressure = psychrolib.GetStandardAtmPressure(
