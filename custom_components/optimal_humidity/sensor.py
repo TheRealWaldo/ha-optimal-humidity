@@ -50,7 +50,6 @@ from homeassistant.const import (
     STATE_UNKNOWN,
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
-    METRIC_SYSTEM,
 )
 from homeassistant.core import callback
 import homeassistant.helpers.config_validation as cv
