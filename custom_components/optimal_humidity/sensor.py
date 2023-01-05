@@ -33,6 +33,8 @@ from homeassistant.components.sensor import (
     PLATFORM_SCHEMA,
 )
 
+from homeassistant.components.sensor import SensorDeviceClass
+
 from homeassistant.const import (
     ATTR_UNIT_OF_MEASUREMENT,
     CONF_NAME,
@@ -45,7 +47,6 @@ from homeassistant.const import (
     STATE_UNKNOWN,
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
-    DEVICE_CLASS_TEMPERATURE,
 )
 from homeassistant.core import callback
 import homeassistant.helpers.config_validation as cv
@@ -150,7 +151,8 @@ class OptimalHumidity(Entity):
         self._is_metric = hass.config.units.is_metric
 
         psychrolib.SetUnitSystem(psychrolib.SI)
-        self._indoor_pressure = psychrolib.GetStandardAtmPressure(hass.config.elevation)
+        self._indoor_pressure = psychrolib.GetStandardAtmPressure(
+            hass.config.elevation)
         _LOGGER.debug(
             "Pressure at current elevation of %s m is %s Pa",
             hass.config.elevation,
@@ -225,7 +227,8 @@ class OptimalHumidity(Entity):
             crit_temp = self.hass.states.get(self._critical_temp_sensor)
             indoor_hum = self.hass.states.get(self._indoor_humidity_sensor)
             if self._indoor_pressure_sensor is not None:
-                indoor_pressure = self.hass.states.get(self._indoor_pressure_sensor)
+                indoor_pressure = self.hass.states.get(
+                    self._indoor_pressure_sensor)
 
             schedule_update = self._update_sensor(
                 self._indoor_temp_sensor, None, indoor_temp
@@ -277,7 +280,8 @@ class OptimalHumidity(Entity):
         elif entity == self._indoor_humidity_sensor:
             self._indoor_hum = OptimalHumidity._update_hum_sensor(new_state)
         elif entity == self._indoor_pressure_sensor:
-            self._indoor_pressure = OptimalHumidity._update_pressure_sensor(new_state)
+            self._indoor_pressure = OptimalHumidity._update_pressure_sensor(
+                new_state)
 
         return True
 
@@ -472,7 +476,8 @@ class OptimalHumidity(Entity):
         """Calculate humidex given temperature and humidity"""
         # It equals H = T + (0.5555 * (e - 10)), where T is the temperature in Celsius and e is the vapor pressure in millibars (mb)
         psychrolib.SetUnitSystem(psychrolib.SI)
-        vapor_pressure = psychrolib.GetVapPresFromRelHum(temperature, humidity) * 0.01
+        vapor_pressure = psychrolib.GetVapPresFromRelHum(
+            temperature, humidity) * 0.01
         return self._indoor_temp + (0.5555 * (vapor_pressure - 10))
 
     def _calc_humidex(self):
@@ -544,7 +549,8 @@ class OptimalHumidity(Entity):
         else:
             psychrolib.SetUnitSystem(psychrolib.SI)
             crit_humidity = (
-                psychrolib.GetRelHumFromTDewPoint(self._crit_temp, self._dewpoint) * 100
+                psychrolib.GetRelHumFromTDewPoint(
+                    self._crit_temp, self._dewpoint) * 100
             )
 
         if crit_humidity > 100:
@@ -607,7 +613,8 @@ class OptimalHumidity(Entity):
         if None in (self._optimal_humidity, self._indoor_temp):
             self._optimal_humidex = None
             return
-        optimal_humidex = self._humidex(self._indoor_temp, self._optimal_humidity / 100)
+        optimal_humidex = self._humidex(
+            self._indoor_temp, self._optimal_humidity / 100)
         self._optimal_humidex = float(f"{optimal_humidex:.2f}")
         _LOGGER.debug(
             "Optimal humidex set to %s %s", self._optimal_humidex, TEMP_CELSIUS
@@ -635,7 +642,8 @@ class OptimalHumidity(Entity):
             )
             * 100
         )
-        _LOGGER.debug("Comfortable relative humidity is: %s", comfortable_humidity)
+        _LOGGER.debug("Comfortable relative humidity is: %s",
+                      comfortable_humidity)
         if comfortable_humidity > 100:
             _LOGGER.warn(
                 "Not possible to reach a comfortable humidity at %s%s, will feel dry.",
@@ -668,7 +676,8 @@ class OptimalHumidity(Entity):
         _LOGGER.debug("Comfortable dewpoint is %s", comfortable_dew_point)
 
         if comfortable_dew_point > self._crit_temp:
-            _LOGGER.debug("Comfortable dewpoint is above critical dry bulb temperature")
+            _LOGGER.debug(
+                "Comfortable dewpoint is above critical dry bulb temperature")
             critical_humidity = 1
         else:
             critical_humidity = psychrolib.GetRelHumFromTDewPoint(
@@ -696,7 +705,8 @@ class OptimalHumidity(Entity):
                 return
             else:
                 optimal_humidity = (
-                    psychrolib.GetRelHumFromTDewPoint(self._indoor_temp, dew_point)
+                    psychrolib.GetRelHumFromTDewPoint(
+                        self._indoor_temp, dew_point)
                     * 100
                 )
         else:
@@ -709,7 +719,8 @@ class OptimalHumidity(Entity):
         else:
             self._optimal_humidity = float(f"{optimal_humidity:.1f}")
 
-        _LOGGER.debug("Optimal humidity: %s %s", self._optimal_humidity, PERCENTAGE)
+        _LOGGER.debug("Optimal humidity: %s %s",
+                      self._optimal_humidity, PERCENTAGE)
 
     @property
     def should_poll(self):
@@ -725,7 +736,7 @@ class OptimalHumidity(Entity):
     def unit_of_measurement(self):
         """Return the unit of measurement."""
 
-        if SENSOR_TYPES[self._sensor_type][3] == DEVICE_CLASS_TEMPERATURE:
+        if SENSOR_TYPES[self._sensor_type][3] == SensorDeviceClass.TEMPERATURE:
             if self._is_metric:
                 return TEMP_CELSIUS
             return TEMP_FAHRENHEIT
