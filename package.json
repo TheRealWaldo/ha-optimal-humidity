@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/TheRealWaldo/ha-optimal-humidity#readme",
   "devDependencies": {
-    "@commitlint/config-conventional": "^17.4.3"
+    "@commitlint/config-conventional": "^17.4.4"
   }
 }
