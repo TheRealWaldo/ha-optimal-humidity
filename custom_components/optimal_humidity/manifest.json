@@ -1,14 +1,14 @@
 {
   "domain": "optimal_humidity",
   "name": "Optimal Humidity",
-  "documentation": "https://github.com/TheRealWaldo/ha-optimal-humidity",
-  "issue_tracker": "https://github.com/TheRealWaldo/ha-optimal-humidity/issues",
-  "version": "v2.0.5",
   "codeowners": [
     "@TheRealWaldo"
   ],
+  "documentation": "https://github.com/TheRealWaldo/ha-optimal-humidity",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/TheRealWaldo/ha-optimal-humidity/issues",
   "requirements": [
     "psychrolib>=2.5.0"
   ],
-  "iot_class": "calculated"
+  "version": "v2.0.5"
 }
