@@ -10,5 +10,5 @@
   "requirements": [
     "psychrolib>=2.5.0"
   ],
-  "version": "v2.0.5"
+  "version": "v2.0.6"
 }
