@@ -30,6 +30,8 @@ from .const import (
 
 from homeassistant import util
 
+from homeassistant.util.temperature import fahrenheit_to_celsius
+
 from homeassistant.util.unit_system import METRIC_SYSTEM
 
 from homeassistant.components.sensor import (
@@ -316,7 +318,7 @@ class OptimalHumidity(Entity):
             return None
 
         if unit == TEMP_FAHRENHEIT:
-            return util.temperature.fahrenheit_to_celsius(temp)
+            return fahrenheit_to_celsius(temp)
         if unit == TEMP_CELSIUS:
             return temp
         _LOGGER.warning(
