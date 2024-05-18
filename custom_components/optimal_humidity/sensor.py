@@ -45,11 +45,9 @@ from homeassistant.const import (
     CONF_TYPE,
     EVENT_HOMEASSISTANT_START,
     PERCENTAGE,
-    PRESSURE_HPA,
-    PRESSURE_PA,
     STATE_UNKNOWN,
-    TEMP_CELSIUS,
-    TEMP_FAHRENHEIT,
+    UnitOfPressure,
+    UnitOfTemperature,
 )
 from homeassistant.core import callback
 import homeassistant.helpers.config_validation as cv
@@ -315,16 +313,16 @@ class OptimalHumidity(Entity):
             )
             return None
 
-        if unit == TEMP_FAHRENHEIT:
+        if unit == UnitOfTemperature.FAHRENHEIT:
             return util.temperature.fahrenheit_to_celsius(temp)
-        if unit == TEMP_CELSIUS:
+        if unit == UnitOfTemperature.CELSIUS:
             return temp
         _LOGGER.warning(
             "Temp sensor %s has unsupported unit: %s (allowed: %s, %s)",
             state.entity_id,
             unit,
-            TEMP_CELSIUS,
-            TEMP_FAHRENHEIT,
+            UnitOfTemperature.CELSIUS,
+            UnitOfTemperature.FAHRENHEIT,
         )
 
         return None
@@ -397,18 +395,18 @@ class OptimalHumidity(Entity):
             )
             return None
 
-        if unit == PRESSURE_HPA:
+        if unit == UnitOfPressure.HPA:
             return pressure * 100
 
-        if unit == PRESSURE_PA:
+        if unit == UnitOfPressure.PA:
             return pressure
 
         _LOGGER.error(
             "Pressure sensor %s has unsupported unit: %s (allowed: %s, %s)",
             state.entity_id,
             unit,
-            PRESSURE_HPA,
-            PRESSURE_PA,
+            UnitOfPressure.HPA,
+            UnitOfPressure.PA,
         )
         return None
 
@@ -508,7 +506,7 @@ class OptimalHumidity(Entity):
         )
         self._dewpoint = float(f"{dewpoint:.2f}")
 
-        _LOGGER.debug("Dewpoint: %f %s", self._dewpoint, TEMP_CELSIUS)
+        _LOGGER.debug("Dewpoint: %f %s", self._dewpoint, UnitOfTemperature.CELSIUS)
 
     def _calc_specific_humidity(self):
         """Calculate the specific humidity in the room."""
@@ -541,9 +539,9 @@ class OptimalHumidity(Entity):
             _LOGGER.debug(
                 "Invalid inputs - dewpoint: %s %s crit_temp: %s %s",
                 self._dewpoint,
-                TEMP_CELSIUS,
+                UnitOfTemperature.CELSIUS,
                 self._crit_temp,
-                TEMP_CELSIUS,
+                UnitOfTemperature.CELSIUS,
             )
             self._crit_hum = None
             self._available = False
@@ -623,7 +621,7 @@ class OptimalHumidity(Entity):
             self._indoor_temp, self._optimal_humidity / 100)
         self._optimal_humidex = float(f"{optimal_humidex:.2f}")
         _LOGGER.debug(
-            "Optimal humidex set to %s %s", self._optimal_humidex, TEMP_CELSIUS
+            "Optimal humidex set to %s %s", self._optimal_humidex, UnitOfTemperature.CELSIUS
         )
 
     def _calc_comfortable_humidity(self):
@@ -654,7 +652,7 @@ class OptimalHumidity(Entity):
             _LOGGER.warn(
                 "Not possible to reach a comfortable humidity at %s%s, will feel dry.",
                 self._indoor_temp,
-                TEMP_CELSIUS,
+                UnitOfTemperature.CELSIUS,
             )
             comfortable_humidity = 100
 
@@ -699,11 +697,11 @@ class OptimalHumidity(Entity):
                 _LOGGER.warn(
                     "Not possible to reach a mold free humidity at %s%s and %s%s given a critical temperature of %s%s and humidity of %s%s",
                     self._indoor_temp,
-                    TEMP_CELSIUS,
+                    UnitOfTemperature.CELSIUS,
                     self._indoor_hum * 100,
                     PERCENTAGE,
                     self._crit_temp,
-                    TEMP_CELSIUS,
+                    UnitOfTemperature.CELSIUS,
                     critical_humidity * 100,
                     PERCENTAGE,
                 )
@@ -744,8 +742,8 @@ class OptimalHumidity(Entity):
 
         if SENSOR_TYPES[self._sensor_type][3] == SensorDeviceClass.TEMPERATURE:
             if self._is_metric:
-                return TEMP_CELSIUS
-            return TEMP_FAHRENHEIT
+                return UnitOfTemperature.CELSIUS
+            return UnitOfTemperature.FAHRENHEIT
 
         return SENSOR_TYPES[self._sensor_type][1]
 
