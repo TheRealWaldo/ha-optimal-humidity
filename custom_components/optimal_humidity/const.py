@@ -4,7 +4,7 @@ from homeassistant.components.sensor import SensorDeviceClass
 
 from homeassistant.const import (
     PERCENTAGE,
-    TEMP_CELSIUS,
+    UnitOfTemperature,
 )
 
 NAME = "Optimal Humidity"
@@ -39,7 +39,7 @@ MILLIGRAMS_OF_WATER_TO_GRAMS_OF_AIR = "mg_H₂O g_Air⁻¹"
 SENSOR_TYPES = {
     ATTR_DEWPOINT: (
         ATTR_DEWPOINT,
-        TEMP_CELSIUS,
+        UnitOfTemperature.CELSIUS,
         SensorDeviceClass.TEMPERATURE,
         "hass:thermometer",
     ),
@@ -63,7 +63,7 @@ SENSOR_TYPES = {
     ),
     ATTR_HUMIDEX: (
         ATTR_HUMIDEX,
-        TEMP_CELSIUS,
+        UnitOfTemperature.CELSIUS,
         SensorDeviceClass.TEMPERATURE,
         "hass:thermometer",
     ),
@@ -81,7 +81,7 @@ SENSOR_TYPES = {
     ),
     ATTR_OPTIMAL_HUMIDEX: (
         ATTR_OPTIMAL_HUMIDEX,
-        TEMP_CELSIUS,
+        UnitOfTemperature.CELSIUS,
         SensorDeviceClass.TEMPERATURE,
         "hass:thermometer",
     ),
