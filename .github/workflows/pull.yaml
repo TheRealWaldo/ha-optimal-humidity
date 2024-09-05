@@ -52,7 +52,7 @@ jobs:
       - name: Commit Linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: wagoid/commitlint-github-action@v6.1.1
+        uses: wagoid/commitlint-github-action@v6.1.2
 
       - uses: actions/setup-python@v5.2.0
         with:
